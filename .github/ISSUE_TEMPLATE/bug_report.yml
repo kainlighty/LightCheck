@@ -1,0 +1,30 @@
+name: Bug report
+description: Create a bug report
+labels: ["type: bug"]
+body:
+  - type: input
+    id: plugin-version
+    attributes:
+      label: Plugin Version
+    validations:
+      required: true
+  - type: dropdown
+    id: core-select
+    attributes:
+      label: Select The Core
+      multiple: true
+      options:
+        - Spigot
+        - Paper
+        - Purpur
+        - Airplane
+        - Pufferfish
+        - Mirai
+        - Patina
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Be sure to insert StackTrace errors. If there isn't one, describe the problem in as much detail as possible.
