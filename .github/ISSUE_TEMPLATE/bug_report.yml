@@ -1,6 +1,6 @@
 name: Bug report
 description: Create a bug report
-labels: ["type: bug"]
+labels: ["bug"]
 body:
   - type: input
     id: plugin-version
@@ -12,7 +12,6 @@ body:
     id: core-select
     attributes:
       label: Select The Core
-      multiple: true
       options:
         - Spigot
         - Paper
@@ -28,3 +27,5 @@ body:
     attributes:
       label: Description
       description: Be sure to insert StackTrace errors. If there isn't one, describe the problem in as much detail as possible.
+    validations:
+          required: true
