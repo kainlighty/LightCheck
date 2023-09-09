@@ -1,6 +1,6 @@
 # LightCheck
 
-![0a950f2c10703f6504c9f98f8ac5f90edd7a97be](https://github.com/kainlighty/LightCheck/assets/111251772/b82a267f-16d3-43e0-a5ac-f3d26cde453d)
+![0a950f2c10703f6504c9f98f8ac5f90edd7a97be]([https://github.com/kainlighty/LightCheck/assets/111251772/b82a267f-16d3-43e0-a5ac-f3d26cde453d](https://proxy.spigotmc.org/0a950f2c10703f6504c9f98f8ac5f90edd7a97be?url=https%3A%2F%2Fi.imgur.com%2Fls7JJg3.png))
 
 ## › Features
 - #### Russian and English language support
@@ -23,8 +23,8 @@
 - #### Chat messages from the person being checked come only to the person checking
 
 ## › Screenshots
-![7d23b3c23ecc6bcfa777fd16dcd2ee46077f8640](https://github.com/kainlighty/LightCheck/assets/111251772/c364df7a-8cf3-4d84-9b8b-bc1cd7426b8d)
-![7d775ed462693e815bc4655e8a43e555a2df591f](https://github.com/kainlighty/LightCheck/assets/111251772/62349eb2-0206-43ff-8067-5d43539aa608)
+![7d23b3c23ecc6bcfa777fd16dcd2ee46077f8640]([https://github.com/kainlighty/LightCheck/assets/111251772/c364df7a-8cf3-4d84-9b8b-bc1cd7426b8d](https://proxy.spigotmc.org/7d23b3c23ecc6bcfa777fd16dcd2ee46077f8640?url=https%3A%2F%2Fi.imgur.com%2Ffq0qD3n.png))
+![7d775ed462693e815bc4655e8a43e555a2df591f]([https://github.com/kainlighty/LightCheck/assets/111251772/62349eb2-0206-43ff-8067-5d43539aa608](https://proxy.spigotmc.org/7d775ed462693e815bc4655e8a43e555a2df591f?url=https%3A%2F%2Fi.imgur.com%2F24RzQeJ.png))
 
 | Command         | Description                            | Permission          |
 |-----------------|----------------------------------------|---------------------|
