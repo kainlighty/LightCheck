@@ -4,8 +4,7 @@
 ## › Features
 - #### Russian and English language support
 - #### Checking with or without timer
-- #### Titles and chat messages
-- #### Delay on the check command (from permission)
+- #### Titles, bossbar and chat messages
 
 ## › Abilities:
 - #### Teleporting to staff during check
@@ -18,8 +17,8 @@
 - #### Prohibit writing to the chat (except for a personal chat during the check with the inspector)
 - #### Prohibition of all commands except those allowed specified in the config
 - #### The very recognition of the use of cheats
-- #### Execution of commands at self-recognition, exit and shutdown of the timer
-- #### Chat messages from the person being checked come only to the person checking
+- #### Execution of commands at self-recognition, exit and kick
+- #### Chat messages from the person being checked come only to inspector
 
 ## › Screenshots
 ![7d23b3c23ecc6bcfa777fd16dcd2ee46077f8640](https://github.com/kainlighty/LightCheck/assets/111251772/cce24929-3756-4af9-81e4-bfe02065bc60)
