@@ -26,18 +26,18 @@
 ![7d775ed462693e815bc4655e8a43e555a2df591f](https://github.com/kainlighty/LightCheck/assets/111251772/09fb152a-2c6c-4039-9825-7b6052e40863)
 
 
-| Command         | Description                            | Permission          |
-|-----------------|----------------------------------------|---------------------|
-| check           | Help by commands                       | lightcheck.check    |
-| check list      | The list of currently checking         | lightcheck.list     |
-| check \<player> | Summon a player to check               | lightcheck.check    |
-| check confirm   | Confirm the use of cheats (for player) | -                   |
-| check approve   | To find the player guilty              | lightcheck.approve  |
-| check disprove  | To find the player innocent            | lightcheck.disprove |
-| check rt        | Stop the timer to the player           | lightcheck.rt       |
-| check stop-all  | Cancel all current checks              | lightcheck.admin    |
-| check reload    | Reload configurations                  | *ONLY CONSOLE*      |
-| check reconfig  | Update configurations                  | *ONLY CONSOLE*      |
+| Command          | Description                            | Permission            |
+|------------------|----------------------------------------|-----------------------|
+| check            | Help by commands                       | lightcheck.check      |
+| check list       | The list of currently checking         | lightcheck.list       |
+| check \<player>  | Summon a player to check               | lightcheck.check      |
+| check confirm    | Confirm the use of cheats (for player) | -                     |
+| check approve    | To find the player guilty              | lightcheck.approve    |
+| check disprove   | To find the player innocent            | lightcheck.disprove   |
+| check timer stop | Stop the timer to the player           | lightcheck.timer.stop |
+| check stop-all   | Cancel all current checks              | lightcheck.admin      |
+| check reload     | Reload configurations                  | *ONLY CONSOLE*        |
+| check reconfig   | Update configurations                  | *ONLY CONSOLE*        |
 
 
 | Permissions without commands | Description                                    |
