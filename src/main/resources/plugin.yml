@@ -1,0 +1,48 @@
+name: LightCheck
+main: ru.kainlight.lightcheck.Main
+version: '${project.version}'
+api-version: '1.16'
+
+authors: [ kainlight ]
+description: '${pom.description}'
+website: vk.com/kainlight
+
+commands:
+  lightcheck:
+    aliases:
+      - check
+    description: Вызвать игрока на проверку
+
+permissions:
+  lightcheck.list:
+    default: op
+  lightcheck.check:
+    default: op
+  lightcheck.bypass:
+    default: op
+  lightcheck.confirm:
+    default: not op
+  lightcheck.approve:
+    default: not op
+  lightcheck.disprove:
+    default: op
+  lightcheck.timer.add:
+    default: op
+  lightcheck.timer.stop:
+    default: op
+  lightcheck.timer.*:
+    default: op
+    children:
+      lightcheck.timer.add: true
+      lightcheck.timer.stop: true
+  lightcheck.stop-all:
+    default: op
+  lightcheck.admin:
+    children:
+      lightcheck.list: true
+      lightcheck.check: true
+      lightcheck.bypass: true
+      lightcheck.approve: true
+      lightcheck.disprove: true
+      lightcheck.timer.*: true
+      lightcheck.stop-all: true

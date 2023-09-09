@@ -1,0 +1,45 @@
+### Permission - Command - Description ###
+# lightcheck.list - /check list > List of checks now
+# lightcheck.check - /check <player> AND access to help commands
+# lightcheck.approve - /check approve > Approve checked player
+# NONE - /confirm > approve yourself
+# lightcheck.rt - /check rt | removetimer > Remove timer
+# lightcheck.stop-all - /check stop-all > Stop all checks now
+# lightcheck.check.bypass > protection against a call for verification
+
+# only when the server is turned on
+update-notification: true #
+
+# Russian or English available now
+language: RUSSIAN
+
+settings:
+  title: true
+  actionbar: true
+  bossbar: true
+  message-timer: 10 # every 10 seconds a message will be sent
+  timer: 300 # after how many seconds will the player be banned
+
+# block-move may conflict with anti-cheats
+abilities:
+  teleport-to-staff: true
+  teleport-back: true # require enabled teleport-to-staff
+  block-gamemode: true
+  block-move: true
+  block-drops: true
+  block-pickup: true
+  block-damage: true
+  block-interact: true
+  block-chat:
+    enable: true
+    allowed-commands:
+      - 'check'
+
+# Example for disable: approve: []
+commands:
+  approve: # If the PLAYER pleads guilty or the STAFF recognizes the player as a cheater
+    - 'kick <player> Recognition of the use of cheats'
+  quit:
+    - 'kick <player> Exit from verification'
+  kick:
+    - 'kick <player> Kicked from this server'

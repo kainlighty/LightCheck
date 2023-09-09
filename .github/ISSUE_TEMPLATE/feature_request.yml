@@ -1,0 +1,30 @@
+name: Feature request
+description: Create a request
+labels: ["enhancement"]
+body:
+  - type: input
+    id: plugin-version
+    attributes:
+      label: Plugin Version
+    validations:
+      required: true
+  - type: dropdown
+    id: core-select
+    attributes:
+      label: Select The Core
+      options:
+        - Spigot
+        - Paper
+        - Purpur
+        - Airplane
+        - Pufferfish
+        - Mirai
+        - Patina
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Your requeset
+    validations:
+      required: true
