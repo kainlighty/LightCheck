@@ -211,7 +211,7 @@ public class Check implements CommandExecutor {
             plugin.getMessenger().sendMessage(sender, " &c&l» &a/check confirm &8- &7признаться виновным");
             plugin.getMessenger().sendMessage(sender, " &c&l» &a/check approve &8- &7признать виновным");
             plugin.getMessenger().sendMessage(sender, " &c&l» &a/check disprove  &8- &7признать невиновным");
-            plugin.getMessenger().sendMessage(sender, " &c&l» &a/check rt|removetimer &8- &7отключить таймер");
+            plugin.getMessenger().sendMessage(sender, " &c&l» &a/check timer stop &8- &7отключить таймер");
             plugin.getMessenger().sendMessage(sender, " &c&l» &a/check stop-all &8- &7отменить все текущие проверки");
             plugin.getMessenger().sendMessage(sender, " &c&l» &a/check reload &8- &7перезагрузить конфигурации (для консоли)");
             plugin.getMessenger().sendMessage(sender, " &c&l» &a/check reconfig &8- &7обновить конфигурации (для консоли)");
@@ -222,7 +222,7 @@ public class Check implements CommandExecutor {
             plugin.getMessenger().sendMessage(sender, " &c&l» &a/check confirm &8- &7plead guilty");
             plugin.getMessenger().sendMessage(sender, " &c&l» &a/check approve &8- &7find guilty");
             plugin.getMessenger().sendMessage(sender, " &c&l» &a/check disprove  &8- &7find not guilty");
-            plugin.getMessenger().sendMessage(sender, " &c&l» &a/check rt|removetimer &8- &7disable the timer");
+            plugin.getMessenger().sendMessage(sender, " &c&l» &a/check timer stop &8- &7disable the timer");
             plugin.getMessenger().sendMessage(sender, " &c&l» &a/check stop-all &8- &7cancel all current checks");
             plugin.getMessenger().sendMessage(sender, " &c&l» &a/check reload &8- &7reload all configurations (only console)");
             plugin.getMessenger().sendMessage(sender, " &c&l» &a/check reconfig &8- &7update all configurations (only console)");

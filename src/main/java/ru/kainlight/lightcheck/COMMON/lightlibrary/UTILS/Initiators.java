@@ -1,23 +1,21 @@
 package ru.kainlight.lightcheck.COMMON.lightlibrary.UTILS;
 
-import ru.kainlight.lightcheck.Main;
+import org.bukkit.plugin.PluginDescriptionFile;
+import ru.kainlight.lightcheck.COMMON.lightlibrary.LightLib;
 
-@SuppressWarnings("deprecation")
 public final class Initiators {
+    public static void startPluginMessage(PluginDescriptionFile d) {
+        Messenger.get().logger("");
 
-    private static final String name = Main.getInstance().getDescription().getName();
-    private static final String version = Main.getInstance().getDescription().getVersion();
+        Messenger.get()
+                .logger("&c » &f" + d.getName() + " enabled")
+                .logger("&c » &fVersion: " + d.getVersion());
 
-    public static void startPluginMessage() {
-        Parser.get().logger("");
-        Parser.get().logger("&c » &f" + name + " enabled");
-        Parser.get().logger("&c » &fVersion: " + version);
-        new GitHubUpdater(Main.getInstance()).start();
-        //Parser.get().logger("&c » &fAuthor: kainlight");
-        Parser.get().logger("");
+        LightLib.startUpdater();
+        Messenger.get().logger("");
     }
 
-    public static void stopPluginMessage() {
-        Parser.get().logger("&c » &f" + name + " disabled");
+    public static void stopPluginMessage(String name) {
+        Messenger.get().logger("&c » &f" + name + " disabled");
     }
 }

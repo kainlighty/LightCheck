@@ -12,6 +12,7 @@ import ru.kainlight.lightcheck.UTILS.Runnables;
 
 @Getter
 @Internal
+@SuppressWarnings("all")
 public final class Main extends JavaPlugin {
 
     @Getter
@@ -37,12 +38,12 @@ public final class Main extends JavaPlugin {
         getCommand("lightcheck").setExecutor(new Check(this));
         getServer().getPluginManager().registerEvents(new CheckedListener(this), this);
 
-        Initiators.startPluginMessage();
+        Initiators.startPluginMessage(getDescription());
     }
 
     @Override
     public void onDisable() {
-        Initiators.stopPluginMessage();
+        Initiators.stopPluginMessage(getDescription().getName());
     }
 
 }

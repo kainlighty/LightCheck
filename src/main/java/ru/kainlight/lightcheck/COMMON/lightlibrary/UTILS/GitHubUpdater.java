@@ -19,7 +19,6 @@ public final class GitHubUpdater {
         this.pluginName = plugin.getDescription().getName();
         this.currentVersion = plugin.getDescription().getVersion();
         this.latestVersion = plugin.getDescription().getVersion();
-        this.isUpdateEnabled = plugin.getConfig().getBoolean("update-notification");
     }
 
     private final String pluginName;
@@ -27,7 +26,6 @@ public final class GitHubUpdater {
     private String latestVersion;
     private boolean isPrerelease;
     private String resourceURL;
-    private final boolean isUpdateEnabled;
 
     private boolean checkForUpdates() {
         String githubRepo = "kainlighty/" + pluginName;
@@ -49,7 +47,7 @@ public final class GitHubUpdater {
             reader.close();
             input.close(); // ! added
 
-            JsonElement jsonElement = JsonParser.parseString(responseBuilder.toString());
+            JsonElement jsonElement = new JsonParser().parse(responseBuilder.toString());
             JsonArray jsonArray = jsonElement.getAsJsonArray();
             JsonObject latestRelease = jsonArray.get(0).getAsJsonObject();  // Получаем последний релиз
 
@@ -98,14 +96,12 @@ public final class GitHubUpdater {
     }
 
     public void start() {
-        if (!isUpdateEnabled) return;
-
         if (checkForUpdates()) {
             String updateMessage = latestVersion;
             if (isPrerelease) {
                 updateMessage += " #d29922(Pre-release)";
             }
-            Parser.get().logger("&c ! New version found: " + updateMessage)
+            Messenger.get().logger("&c ! New version found: " + updateMessage)
                     .logger("&c ! Recommended for installation: &e" + resourceURL);
         }
     }

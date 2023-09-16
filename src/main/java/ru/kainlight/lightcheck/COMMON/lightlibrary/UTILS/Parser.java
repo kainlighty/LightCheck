@@ -5,7 +5,6 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
@@ -22,8 +21,6 @@ public final class Parser {
     private final Pattern pattern = Pattern.compile("#?&?([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})");
 
     public Component hex(String message) {
-        if(message == null) return Component.text("");
-
         StringBuffer buffer = new StringBuffer();
         Matcher matcher = pattern.matcher(message);
         while (matcher.find()) {
@@ -42,8 +39,6 @@ public final class Parser {
     }
 
     public Component hex(Component message) {
-        if(message == null) return Component.text("");
-
         String serializedMessage = LegacyComponentSerializer.legacySection().serialize(message);
         return hex(serializedMessage);
     }
@@ -56,8 +51,6 @@ public final class Parser {
     }
 
     public String hexString(String message) {
-        if(message == null) return "";
-
         Component serializedMessage = hex(message);
         return LegacyComponentSerializer.legacySection().serialize(serializedMessage);
     }
@@ -76,10 +69,4 @@ public final class Parser {
                 .replacement(replaceable)
                 .build());
     }
-
-    public Parser logger(@NotNull String message) {
-        Bukkit.getServer().getConsoleSender().sendMessage(hex(message));
-        return this;
-    }
-
 }

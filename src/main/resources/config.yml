@@ -8,7 +8,7 @@
 # lightcheck.check.bypass > protection against a call for verification
 
 # only when the server is turned on
-update-notification: true #
+update-notification: true
 
 # Russian or English available now
 language: RUSSIAN

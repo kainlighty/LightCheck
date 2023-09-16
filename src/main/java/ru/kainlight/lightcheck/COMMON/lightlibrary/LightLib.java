@@ -2,6 +2,7 @@ package ru.kainlight.lightcheck.COMMON.lightlibrary;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import ru.kainlight.lightcheck.COMMON.lightlibrary.UTILS.GitHubUpdater;
 import ru.kainlight.lightcheck.Main;
 
 import java.io.InputStream;
@@ -36,6 +37,11 @@ public final class LightLib {
         });
 
         plugin.saveConfig();
+    }
+
+    public static void startUpdater() {
+        if(!Main.getInstance().getConfig().getBoolean("update-notification")) return;
+        new GitHubUpdater(Main.getInstance()).start();
     }
 
 }

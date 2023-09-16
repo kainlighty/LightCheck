@@ -47,6 +47,7 @@ public final class CustomConfig {
                 configFile = new File(subdirectoryFile, fileName);
             }
         }
+
         if (!configFile.exists()) {
             if (subdirectory != null) {
                 plugin.saveResource(subdirectory + File.separator + fileName, false);
@@ -75,9 +76,8 @@ public final class CustomConfig {
     }
 
     public void saveConfig() {
-        if (fileConfiguration == null || configFile == null) {
-            return;
-        }
+        if (fileConfiguration == null || configFile == null) return;
+
         try {
             getConfig().save(configFile);
         } catch (IOException e) {
@@ -94,6 +94,7 @@ public final class CustomConfig {
             plugin.messageConfig.reloadConfig();
         }
     }
+
     public static void saveLanguages(Main plugin, String pathToLang) {
         // Получить URL папки messages внутри JAR
         URL url = CustomConfig.class.getResource("/messages");
@@ -101,9 +102,9 @@ public final class CustomConfig {
             try {
                 // Создать подключение к этому URL
                 URLConnection connection = url.openConnection();
-                if (connection instanceof JarURLConnection) {
+                if (connection instanceof JarURLConnection jarConnection) {
                     // Получить JAR файл
-                    JarFile jar = ((JarURLConnection) connection).getJarFile();
+                    JarFile jar = (jarConnection).getJarFile();
 
                     // Получить все элементы JAR файла
                     Enumeration<JarEntry> entries = jar.entries();
