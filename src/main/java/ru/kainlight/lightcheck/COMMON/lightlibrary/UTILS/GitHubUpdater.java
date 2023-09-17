@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.bukkit.Bukkit;
 import ru.kainlight.lightcheck.Main;
 
 import java.io.BufferedReader;
@@ -14,8 +13,11 @@ import java.net.URL;
 
 public final class GitHubUpdater {
 
+    private final Main plugin;
+
     @SuppressWarnings("deprecation")
     public GitHubUpdater(Main plugin) {
+        this.plugin = plugin;
         this.pluginName = plugin.getDescription().getName();
         this.currentVersion = plugin.getDescription().getVersion();
         this.latestVersion = plugin.getDescription().getVersion();
@@ -86,10 +88,10 @@ public final class GitHubUpdater {
             // Если версии major.minor.patch равны и обе являются предварительными версиями, то считать их равными
             return false;
         } catch (ArrayIndexOutOfBoundsException | NumberFormatException misc) { // Если версия начинается с букв или содержит буквы, может выкинуть exception. Пусть на всякий будет.
-            Bukkit.getLogger().warning("Error in numbering the new version: " + misc.getMessage());
+            plugin.getLogger().warning("Error in numbering the new version: " + misc.getMessage());
             return false;
         } catch (Exception e) { // Просто ловлю любые ошибки
-            Bukkit.getLogger().severe("Couldn't check for updates! Stacktrace:");
+            plugin.getLogger().severe("Couldn't check for updates! Stacktrace:");
             e.printStackTrace();
             return false;
         }
@@ -97,12 +99,12 @@ public final class GitHubUpdater {
 
     public void start() {
         if (checkForUpdates()) {
-            String updateMessage = latestVersion;
-            if (isPrerelease) {
-                updateMessage += " #d29922(Pre-release)";
-            }
-            Messenger.get().logger("&c ! New version found: " + updateMessage)
-                    .logger("&c ! Recommended for installation: &e" + resourceURL);
+            String newVersion = latestVersion;
+            if (isPrerelease) newVersion += " #d29922(Pre-release)";
+
+            Messenger.get().logger("&c ! New version found: " + newVersion)
+                    .logger("&c ! Recommended for installation: &7" + resourceURL);
+
         }
     }
 }

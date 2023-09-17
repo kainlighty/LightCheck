@@ -85,7 +85,7 @@ public final class CustomConfig {
         }
     }
 
-    public void reloadLanguage(String pathToLang) {
+    void reloadLanguage(String pathToLang) { // Доделать
         String lang = plugin.getConfig().getString(pathToLang);
 
         if (!lang.equalsIgnoreCase(fileName.replace(".yml", ""))) {
@@ -104,7 +104,7 @@ public final class CustomConfig {
                 URLConnection connection = url.openConnection();
                 if (connection instanceof JarURLConnection jarConnection) {
                     // Получить JAR файл
-                    JarFile jar = (jarConnection).getJarFile();
+                    JarFile jar = jarConnection.getJarFile();
 
                     // Получить все элементы JAR файла
                     Enumeration<JarEntry> entries = jar.entries();
@@ -142,7 +142,6 @@ public final class CustomConfig {
         YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(inputConfigReader);
 
         // Добавление отсутствующих значений из конфигурации по умолчанию и удаление удаленных ключей
-        // Добавление отсутствующих значений из конфигурации по умолчанию и удаление удаленных ключей
         defaultConfig.getKeys(true).forEach(key -> {
             // Если у пользователя нет такого ключа или его значение является значением по умолчанию, добавляем его
             if (!userConfig.contains(key) || userConfig.get(key).equals(defaultConfig.get(key))) {
@@ -157,4 +156,5 @@ public final class CustomConfig {
         });
         saveConfig();
     }
+
 }

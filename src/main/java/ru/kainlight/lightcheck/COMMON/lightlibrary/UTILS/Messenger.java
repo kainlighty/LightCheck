@@ -1,13 +1,17 @@
 package ru.kainlight.lightcheck.COMMON.lightlibrary.UTILS;
 
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.audience.Audiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import ru.kainlight.lightcheck.Main;
 
 import java.time.Duration;
 import java.util.List;
@@ -20,6 +24,7 @@ public final class Messenger {
         return messenger;
     }
 
+
     public void sendClickableHoverMessage(Player player, String message, String hover, String command) {
         if(message == null) return;
 
@@ -30,7 +35,7 @@ public final class Messenger {
                 .clickEvent(ClickEvent.runCommand(command))
                 .hoverEvent(HoverEvent.showText(hoverComponent));
 
-        player.sendMessage(component);
+        getPlayer(player).sendMessage(component);
     }
 
     public void sendClickableMessage(Player player, String message, String command) {
@@ -39,7 +44,7 @@ public final class Messenger {
         Component component = Parser.get().hex(message)
                 .clickEvent(ClickEvent.runCommand(command));
 
-        player.sendMessage(component);
+        getPlayer(player).sendMessage(component);
     }
 
     public void sendMessage(String message, CommandSender... senders) {
@@ -47,7 +52,7 @@ public final class Messenger {
 
         Component messageComponent = Parser.get().hex(message);
         for (CommandSender sender : senders) {
-            sender.sendMessage(messageComponent);
+            Main.getInstance().getAudience().sender(sender).sendMessage(messageComponent);
         }
     }
 
@@ -55,7 +60,7 @@ public final class Messenger {
         if(message == null) return;
 
         Component messageComponent = Parser.get().hex(message);
-        sender.sendMessage(messageComponent);
+        getSender(sender).sendMessage(messageComponent);
     }
 
     public void sendMessage(CommandSender sender, List<String> message) {
@@ -68,7 +73,7 @@ public final class Messenger {
         if(message == null) return;
 
         Component messageComponent = Parser.get().hex(message);
-        player.sendActionBar(messageComponent);
+        getPlayer(player).sendActionBar(messageComponent);
     }
 
     public void sendHoverMessage(Player player, String message, String hover) {
@@ -78,7 +83,7 @@ public final class Messenger {
         Component hoverComponent = Parser.get().hex(hover);
 
         mainComponent = mainComponent.hoverEvent(HoverEvent.showText(hoverComponent));
-        player.sendMessage(mainComponent);
+        getPlayer(player).sendMessage(mainComponent);
     }
 
     public void sendTitle(Player player, String title, String subtitle, long fadeIn, long stay, long fadeOut) {
@@ -88,12 +93,12 @@ public final class Messenger {
         Title.Times times = Title.Times.times(Duration.ofSeconds(fadeIn), Duration.ofSeconds(stay), Duration.ofSeconds(fadeOut));
         Title titleToSend = Title.title(titleComponent, subtitleComponent, times);
 
-        player.showTitle(titleToSend);
+        getPlayer(player).showTitle(titleToSend);
     }
 
     public void sendTitle(Player player, Component title, Component subTitle) {
         Title resultTitle = Title.title(title, subTitle);
-        player.showTitle(resultTitle);
+        getPlayer(player).showTitle(resultTitle);
     }
 
     public void sendMessageForAll(String message) {
@@ -113,8 +118,16 @@ public final class Messenger {
     }
 
     public Messenger logger(@NotNull String message) {
-        Bukkit.getServer().getConsoleSender().sendMessage(Parser.get().hex(message));
+        getSender(Main.getInstance().getServer().getConsoleSender()).sendMessage(Parser.get().hex(message));
         return this;
+    }
+
+    public Audience getPlayer(Player player) {
+        return Main.getInstance().getAudience().sender(player);
+    }
+
+    public Audience getSender(CommandSender sender) {
+        return Main.getInstance().getAudience().sender(sender);
     }
 
 }

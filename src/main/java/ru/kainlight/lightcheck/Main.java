@@ -1,6 +1,7 @@
 package ru.kainlight.lightcheck;
 
 import lombok.Getter;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import ru.kainlight.lightcheck.COMMANDS.Check;
@@ -17,6 +18,7 @@ public final class Main extends JavaPlugin {
 
     @Getter
     private static Main instance;
+    private BukkitAudiences audience;
 
     public CustomConfig messageConfig;
     private Messenger messenger;
@@ -31,6 +33,7 @@ public final class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        audience = BukkitAudiences.create(this);
 
         messenger = new Messenger();
         runnables = new Runnables(this);
@@ -38,12 +41,12 @@ public final class Main extends JavaPlugin {
         getCommand("lightcheck").setExecutor(new Check(this));
         getServer().getPluginManager().registerEvents(new CheckedListener(this), this);
 
-        Initiators.startPluginMessage(getDescription());
+        Initiators.startPluginMessage(this);
     }
 
     @Override
     public void onDisable() {
-        Initiators.stopPluginMessage(getDescription().getName());
+        this.getServer().getScheduler().cancelTasks(this);
     }
 
 }
