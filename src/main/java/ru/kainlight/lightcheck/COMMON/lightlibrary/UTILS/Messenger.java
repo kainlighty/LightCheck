@@ -1,14 +1,13 @@
 package ru.kainlight.lightcheck.COMMON.lightlibrary.UTILS;
 
+import lombok.Getter;
 import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.audience.Audiences;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.title.Title;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import ru.kainlight.lightcheck.Main;
@@ -19,11 +18,13 @@ import java.util.List;
 @SuppressWarnings("unused")
 public final class Messenger {
 
-    private static final Messenger messenger = new Messenger();
-    public static Messenger get() {
-        return messenger;
-    }
+    private final Main plugin;
+    @Getter private final BukkitAudiences audience;
 
+    public Messenger(Main plugin) {
+        this.plugin = plugin;
+        this.audience = BukkitAudiences.create(plugin);
+    }
 
     public void sendClickableHoverMessage(Player player, String message, String hover, String command) {
         if(message == null) return;
@@ -52,7 +53,7 @@ public final class Messenger {
 
         Component messageComponent = Parser.get().hex(message);
         for (CommandSender sender : senders) {
-            Main.getInstance().getAudience().sender(sender).sendMessage(messageComponent);
+            audience.sender(sender).sendMessage(messageComponent);
         }
     }
 
@@ -60,7 +61,7 @@ public final class Messenger {
         if(message == null) return;
 
         Component messageComponent = Parser.get().hex(message);
-        getSender(sender).sendMessage(messageComponent);
+        getSender().sendMessage(messageComponent);
     }
 
     public void sendMessage(CommandSender sender, List<String> message) {
@@ -103,7 +104,7 @@ public final class Messenger {
 
     public void sendMessageForAll(String message) {
         if(message == null) return;
-        Bukkit.getServer().getOnlinePlayers().forEach(player -> sendMessage(player, message));
+        plugin.getServer().getOnlinePlayers().forEach(player -> sendMessage(player, message));
     }
 
     public void sendMessageForAll(String... message) {
@@ -114,20 +115,21 @@ public final class Messenger {
     public void sendMessageForAll(List<String> message) {
         if(message == null) return;
 
-        Bukkit.getServer().getOnlinePlayers().forEach(player -> sendMessage(player, message));
+        plugin.getServer().getOnlinePlayers().forEach(player -> sendMessage(player, message));
     }
 
     public Messenger logger(@NotNull String message) {
-        getSender(Main.getInstance().getServer().getConsoleSender()).sendMessage(Parser.get().hex(message));
+        getSender().sendMessage(Parser.get().hex(message));
         return this;
     }
 
     public Audience getPlayer(Player player) {
-        return Main.getInstance().getAudience().sender(player);
+        return audience.sender(player);
     }
 
-    public Audience getSender(CommandSender sender) {
-        return Main.getInstance().getAudience().sender(sender);
+    public Audience getSender() {
+        CommandSender sender = plugin.getServer().getConsoleSender();
+        return audience.sender(sender);
     }
 
 }

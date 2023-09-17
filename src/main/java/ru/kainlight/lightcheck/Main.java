@@ -35,7 +35,7 @@ public final class Main extends JavaPlugin {
         instance = this;
         audience = BukkitAudiences.create(this);
 
-        messenger = new Messenger();
+        messenger = new Messenger(this);
         runnables = new Runnables(this);
 
         getCommand("lightcheck").setExecutor(new Check(this));

@@ -102,7 +102,7 @@ public final class GitHubUpdater {
             String newVersion = latestVersion;
             if (isPrerelease) newVersion += " #d29922(Pre-release)";
 
-            Messenger.get().logger("&c ! New version found: " + newVersion)
+            plugin.getMessenger().logger("&c ! New version found: " + newVersion)
                     .logger("&c ! Recommended for installation: &7" + resourceURL);
 
         }

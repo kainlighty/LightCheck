@@ -203,7 +203,7 @@ public class Check implements CommandExecutor {
 
         String lang = plugin.getConfig().getString("language");
 
-        sender.sendMessage(Component.text(""));
+        plugin.getMessenger().sendMessage(sender,"");
         if (lang.equalsIgnoreCase("russian")) {
             plugin.getMessenger().sendMessage(sender, " &c&m   &e&l LIGHTCHECK ПОМОЩЬ &c&m   ");
             plugin.getMessenger().sendMessage(sender, " &c&l» &a/check list &8- &7список текущих проверок");
@@ -227,7 +227,7 @@ public class Check implements CommandExecutor {
             plugin.getMessenger().sendMessage(sender, " &c&l» &a/check reload &8- &7reload all configurations (only console)");
             plugin.getMessenger().sendMessage(sender, " &c&l» &a/check reconfig &8- &7update all configurations (only console)");
         }
-        sender.sendMessage(Component.text(""));
+        plugin.getMessenger().sendMessage(sender,"");
     }
 
 
