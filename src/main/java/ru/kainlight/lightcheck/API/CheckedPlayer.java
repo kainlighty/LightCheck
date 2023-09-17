@@ -29,7 +29,6 @@ public final class CheckedPlayer {
         player.setInvulnerable(true);
 
         LightCheckAPI.get().getCheckedPlayers().put(inspector, player);
-
         plugin.getRunnables().start(player);
 
         LightCheckAPI.get().getPreviousLocation().put(player, player.getLocation());

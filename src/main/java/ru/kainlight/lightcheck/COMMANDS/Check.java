@@ -1,6 +1,5 @@
 package ru.kainlight.lightcheck.COMMANDS;
 
-import net.kyori.adventure.text.Component;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -12,7 +11,9 @@ import ru.kainlight.lightcheck.API.LightCheckAPI;
 import ru.kainlight.lightcheck.COMMON.lightlibrary.LightLib;
 import ru.kainlight.lightcheck.Main;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Check implements CommandExecutor {
 
@@ -30,21 +31,21 @@ public class Check implements CommandExecutor {
             return true;
         }
 
-        if (args.length == 1) {
+        if (args.length == 1 && commandSender instanceof CommandSender) {
             if (args[0].equalsIgnoreCase("reload")) {
                 plugin.saveDefaultConfig();
                 plugin.getMessageConfig().saveDefaultConfig();
                 plugin.reloadConfig();
                 plugin.getMessageConfig().reloadConfig();
 
-                plugin.getSLF4JLogger().info("-- Configurations reloaded --");
+                plugin.getLogger().info("-- Configurations reloaded --");
                 return true;
             }
             if (args[0].equalsIgnoreCase("reconfig")) {
                 LightLib.updateConfig(plugin);
                 plugin.messageConfig.updateConfig();
 
-                plugin.getSLF4JLogger().info("-- Configurations updated --");
+                plugin.getLogger().info("-- Configurations updated --");
                 return true;
             }
         }
@@ -53,7 +54,7 @@ public class Check implements CommandExecutor {
         String subCommand = args[0].toLowerCase();
         switch (subCommand) {
             case "list" -> {
-                if (!commandSender.hasPermission("lightcheck.list")) return true;
+                if (!sender.hasPermission("lightcheck.list")) return true;
 
                 var checkedPlayers = LightCheckAPI.get().getCheckedPlayers();
                 Integer checkedPlayersCount = checkedPlayers.size();
@@ -62,12 +63,12 @@ public class Check implements CommandExecutor {
                 final String text = plugin.getMessageConfig().getConfig().getString("list.body");
                 final String footer = plugin.getMessageConfig().getConfig().getString("list.footer").replace("<count>", checkedPlayersCount.toString());
 
-                plugin.getMessenger().sendMessage(commandSender, header);
+                plugin.getMessenger().sendMessage(sender, header);
                 checkedPlayers.forEach((inspector, checked) -> {
                     String message = text.replace("<inspector>", inspector.getName()).replace("<username>", checked.getName());
-                    plugin.getMessenger().sendMessage(commandSender, message);
+                    plugin.getMessenger().sendMessage(sender, message);
                 });
-                plugin.getMessenger().sendMessage(commandSender, footer);
+                plugin.getMessenger().sendMessage(sender, footer);
             }
             case "confirm" -> {
                 if (!LightCheckAPI.get().isChecking(sender)) return true;
@@ -81,26 +82,26 @@ public class Check implements CommandExecutor {
                 checkedPlayer.approve();
             }
             case "approve" -> {
-                if (!commandSender.hasPermission("lightcheck.approve")) return true;
+                if (!sender.hasPermission("lightcheck.approve")) return true;
 
                 CheckedPlayer checkedPlayer = LightCheckAPI.get().getCheckedPlayerByInspector(sender);
                 if (checkedPlayer == null || checkedPlayer.getPlayer() == null) return true;
 
                 String approve_staff = plugin.getMessageConfig().getConfig().getString("successfully.approve")
                         .replace("<username>", checkedPlayer.getPlayer().getName());
-                plugin.getMessenger().sendMessage(commandSender, approve_staff);
+                plugin.getMessenger().sendMessage(sender, approve_staff);
 
                 checkedPlayer.approve();
             }
             case "disprove" -> {
-                if (!(commandSender.hasPermission("lightcheck.disprove"))) return true;
+                if (!(sender.hasPermission("lightcheck.disprove"))) return true;
 
                 CheckedPlayer checkedPlayer = LightCheckAPI.get().getCheckedPlayerByInspector(sender);
                 if (checkedPlayer == null || checkedPlayer.getPlayer() == null) return true;
 
                 String disproved_for_staff = plugin.getMessageConfig().getConfig().getString("successfully.disprove.staff")
                         .replace("<username>", checkedPlayer.getPlayer().getName());
-                plugin.getMessenger().sendMessage(commandSender, disproved_for_staff);
+                plugin.getMessenger().sendMessage(sender, disproved_for_staff);
 
                 boolean titleEnabled = plugin.getConfig().getBoolean("settings.title");
                 if (titleEnabled) {
@@ -145,15 +146,15 @@ public class Check implements CommandExecutor {
                 return true;
             }
             case "stopall", "stop-all" -> {
-                if (!(commandSender.hasPermission("lightcheck.stop-all"))) return true;
+                if (!(sender.hasPermission("lightcheck.stop-all"))) return true;
 
                 String stopall = plugin.getMessageConfig().getConfig().getString("successfully.stop-all");
-                plugin.getMessenger().sendMessage(commandSender, stopall);
+                plugin.getMessenger().sendMessage(sender, stopall);
 
                 LightCheckAPI.get().stopAll();
             }
             default -> {
-                if (!commandSender.hasPermission("lightcheck.check")) return true;
+                if (!sender.hasPermission("lightcheck.check")) return true;
 
                 if (args.length == 1) {
                     String username = args[0];
@@ -162,34 +163,34 @@ public class Check implements CommandExecutor {
 
                     if (player == null) {
                         String notFound = plugin.getMessageConfig().getConfig().getString("errors.not-found");
-                        plugin.getMessenger().sendMessage(commandSender, notFound);
+                        plugin.getMessenger().sendMessage(sender, notFound);
                         return true;
                     }
 
-                    if (player.equals(commandSender)) return true;
+                    if (player.equals(sender)) return true;
 
-                    if (LightCheckAPI.get().getCheckedPlayers().containsKey(commandSender)) {
+                    if (LightCheckAPI.get().getCheckedPlayers().containsKey(sender)) {
                         String already_self = plugin.getMessageConfig().getConfig().getString("errors.already-self");
-                        plugin.getMessenger().sendMessage(commandSender, already_self);
+                        plugin.getMessenger().sendMessage(sender, already_self);
                         return true;
                     }
 
                     if (LightCheckAPI.get().getCheckedPlayers().containsValue(player)) {
                         String already = plugin.getMessageConfig().getConfig().getString("errors.already");
-                        plugin.getMessenger().sendMessage(commandSender, already);
+                        plugin.getMessenger().sendMessage(sender, already);
                         return true;
                     }
 
                     if (player.hasPermission("lightcheck.bypass")) {
                         String already = plugin.getMessageConfig().getConfig().getString("errors.bypass").replace("<username>", player.getName());
-                        plugin.getMessenger().sendMessage(commandSender, already);
+                        plugin.getMessenger().sendMessage(sender, already);
                         return true;
                     }
 
                     checkedPlayer.call(sender);
 
                     String call = plugin.getMessageConfig().getConfig().getString("successfully.call").replace("<username>", username);
-                    plugin.getMessenger().sendMessage(commandSender, call);
+                    plugin.getMessenger().sendMessage(sender, call);
                 }
                 return true;
             }
@@ -235,12 +236,8 @@ public class Check implements CommandExecutor {
 
         private final Main plugin;
 
-        final Map<String, List<String>> completions = new HashMap<>();
-
         public Completer(Main plugin) {
             this.plugin = plugin;
-            completions.putIfAbsent("all", Arrays.asList("list", "approve", "disprove", "timer", "stop-all"));
-            completions.putIfAbsent("timer", Arrays.asList("stop"));
         }
 
         @Override
@@ -249,12 +246,12 @@ public class Check implements CommandExecutor {
 
             if (cmd.getName().equalsIgnoreCase("lightcheck") || cmd.getName().equalsIgnoreCase("check")) {
                 if (args.length == 1) {
-                    List<String> completionsCopy = new ArrayList<>(completions.get("all"));
+                    List<String> completionsCopy = new ArrayList<>(Arrays.asList("list", "approve", "disprove", "timer", "stop-all"));
                     List<String> playerNames = plugin.getServer().getOnlinePlayers().stream().map(Player::getName).toList();
                     completionsCopy.addAll(playerNames);
                     return completionsCopy;
                 } else if (args.length == 2 && args[0].equalsIgnoreCase("timer")) {
-                    return completions.get("timer");
+                    return Arrays.asList("stop");
                 }
             }
             return null;

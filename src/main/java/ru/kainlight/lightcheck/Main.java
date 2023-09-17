@@ -33,7 +33,6 @@ public final class Main extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        audience = BukkitAudiences.create(this);
 
         messenger = new Messenger(this);
         runnables = new Runnables(this);

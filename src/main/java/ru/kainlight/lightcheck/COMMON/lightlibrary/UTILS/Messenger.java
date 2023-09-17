@@ -2,6 +2,7 @@ package ru.kainlight.lightcheck.COMMON.lightlibrary.UTILS;
 
 import lombok.Getter;
 import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -100,6 +101,13 @@ public final class Messenger {
     public void sendTitle(Player player, Component title, Component subTitle) {
         Title resultTitle = Title.title(title, subTitle);
         getPlayer(player).showTitle(resultTitle);
+    }
+
+    public void showBossBar(Player player, BossBar bossBar) {
+        getPlayer(player).showBossBar(bossBar);
+    }
+    public void hideBossBar(Player player, BossBar bossBar) {
+        getPlayer(player).hideBossBar(bossBar);
     }
 
     public void sendMessageForAll(String message) {

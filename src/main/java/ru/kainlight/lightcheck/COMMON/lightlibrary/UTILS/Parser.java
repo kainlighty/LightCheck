@@ -21,6 +21,8 @@ public final class Parser {
     private final Pattern pattern = Pattern.compile("#?&?([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})");
 
     public Component hex(String message) {
+        if(message.equals("")) return Component.text("");
+
         StringBuffer buffer = new StringBuffer();
         Matcher matcher = pattern.matcher(message);
         while (matcher.find()) {
@@ -51,6 +53,8 @@ public final class Parser {
     }
 
     public String hexString(String message) {
+        if(message == null) return "";
+
         Component serializedMessage = hex(message);
         return LegacyComponentSerializer.legacySection().serialize(serializedMessage);
     }

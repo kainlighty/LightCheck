@@ -91,7 +91,7 @@ public final class Runnables {
     }
 
     public void startScreenMessageScheduler(Player player, long timer) {
-        Bossbar bossBar = new Bossbar(timer);
+        Bossbar bossBar = new Bossbar(plugin, timer);
 
         messageScreenTimer.put(player, plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, () -> {
             if(player == null) return;
