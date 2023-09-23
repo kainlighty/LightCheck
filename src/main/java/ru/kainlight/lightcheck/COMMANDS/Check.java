@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import ru.kainlight.lightcheck.API.CheckedPlayer;
 import ru.kainlight.lightcheck.API.LightCheckAPI;
 import ru.kainlight.lightcheck.COMMON.lightlibrary.LightLib;
+import ru.kainlight.lightcheck.COMMON.lightlibrary.LightPlayer;
 import ru.kainlight.lightcheck.Main;
 
 import java.util.ArrayList;
@@ -27,6 +28,8 @@ public class Check implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, String label, String[] args) {
 
         if (args.length == 0) {
+            if(!commandSender.hasPermission("lightcheck.approve")) return true;
+
             sendHelpMessage(commandSender);
             return true;
         }
@@ -42,7 +45,7 @@ public class Check implements CommandExecutor {
                 return true;
             }
             if (args[0].equalsIgnoreCase("reconfig")) {
-                LightLib.updateConfig(plugin);
+                LightLib.get().updateConfig(plugin);
                 plugin.messageConfig.updateConfig();
 
                 plugin.getLogger().info("-- Configurations updated --");
@@ -63,21 +66,20 @@ public class Check implements CommandExecutor {
                 final String text = plugin.getMessageConfig().getConfig().getString("list.body");
                 final String footer = plugin.getMessageConfig().getConfig().getString("list.footer").replace("<count>", checkedPlayersCount.toString());
 
-                plugin.getMessenger().sendMessage(sender, header);
+                LightPlayer.of(sender).sendMessage(header);
                 checkedPlayers.forEach((inspector, checked) -> {
                     String message = text.replace("<inspector>", inspector.getName()).replace("<username>", checked.getName());
-                    plugin.getMessenger().sendMessage(sender, message);
+                    LightPlayer.of(sender).sendMessage(message);
                 });
-                plugin.getMessenger().sendMessage(sender, footer);
+                LightPlayer.of(sender).sendMessage(footer);
             }
             case "confirm" -> {
                 if (!LightCheckAPI.get().isChecking(sender)) return true;
-
                 CheckedPlayer checkedPlayer = LightCheckAPI.get().getCheckedPlayer(sender);
 
                 String approve_player = plugin.getMessageConfig().getConfig().getString("successfully.confirm")
                         .replace("<username>", sender.getName());
-                plugin.getMessenger().sendMessage(checkedPlayer.getInspector(), approve_player);
+                LightPlayer.of(checkedPlayer.getPlayer()).sendMessage(approve_player);
 
                 checkedPlayer.approve();
             }
@@ -89,7 +91,7 @@ public class Check implements CommandExecutor {
 
                 String approve_staff = plugin.getMessageConfig().getConfig().getString("successfully.approve")
                         .replace("<username>", checkedPlayer.getPlayer().getName());
-                plugin.getMessenger().sendMessage(sender, approve_staff);
+                LightPlayer.of(sender).sendMessage(approve_staff);
 
                 checkedPlayer.approve();
             }
@@ -101,47 +103,29 @@ public class Check implements CommandExecutor {
 
                 String disproved_for_staff = plugin.getMessageConfig().getConfig().getString("successfully.disprove.staff")
                         .replace("<username>", checkedPlayer.getPlayer().getName());
-                plugin.getMessenger().sendMessage(sender, disproved_for_staff);
+                LightPlayer.of(sender).sendMessage(disproved_for_staff);
 
                 boolean titleEnabled = plugin.getConfig().getBoolean("settings.title");
                 if (titleEnabled) {
                     String titleMessage = plugin.getMessageConfig().getConfig().getString("screen.disprove-title");
                     String subTitleMessage = plugin.getMessageConfig().getConfig().getString("screen.disprove-subtitle");
-                    plugin.getMessenger().sendTitle(checkedPlayer.getPlayer(), titleMessage, subTitleMessage, 1, 3, 1);
+                    LightPlayer.of(checkedPlayer.getPlayer()).sendTitle(titleMessage, subTitleMessage, 1, 3, 1);
                 }
 
                 String disproved_for_player = plugin.getMessageConfig().getConfig().getString("successfully.disprove.player");
-                plugin.getMessenger().sendMessage(checkedPlayer.getPlayer(), disproved_for_player);
+                LightPlayer.of(checkedPlayer.getPlayer()).sendMessage(disproved_for_player);
 
                 checkedPlayer.disprove();
             }
             case "timer" -> {
                 CheckedPlayer checkedPlayer = LightCheckAPI.get().getCheckedPlayerByInspector(sender);
 
-                // ! TODO: Ошибка при добавлении времени связанная с прогрессом боссбара
-                /*if(args[1].equalsIgnoreCase("add")) {
-                    if (!sender.hasPermission("lightcheck.timer.add")) return true;
-
-                    if(!args[2].matches("\\d+")) {
-                        plugin.getMessenger().sendMessage(sender, "&cNot numbers");
-                        return true;
-                    }
-
-                    Long value = Long.parseLong(args[2]);
-                    checkedPlayer.addTime(value);
-
-                    String message = plugin.getMessageConfig().getConfig().getString("successfully.timer.add")
-                            .replace("<username>", checkedPlayer.getPlayer().getName())
-                            .replace("<value>", value.toString());
-                    plugin.getMessenger().sendMessage(sender, message);
-                } else */
-
                 if (args[1].equalsIgnoreCase("stop")) {
                     if (!sender.hasPermission("lightcheck.timer.stop")) return true;
 
                     checkedPlayer.stopTimer();
                     String message = plugin.getMessageConfig().getConfig().getString("successfully.timer.stop").replace("<username>", checkedPlayer.getPlayer().getName());
-                    plugin.getMessenger().sendMessage(sender, message);
+                    LightPlayer.of(sender).sendMessage(message);
                 }
                 return true;
             }
@@ -149,7 +133,7 @@ public class Check implements CommandExecutor {
                 if (!(sender.hasPermission("lightcheck.stop-all"))) return true;
 
                 String stopall = plugin.getMessageConfig().getConfig().getString("successfully.stop-all");
-                plugin.getMessenger().sendMessage(sender, stopall);
+                LightPlayer.of(sender).sendMessage(stopall);
 
                 LightCheckAPI.get().stopAll();
             }
@@ -163,7 +147,7 @@ public class Check implements CommandExecutor {
 
                     if (player == null) {
                         String notFound = plugin.getMessageConfig().getConfig().getString("errors.not-found");
-                        plugin.getMessenger().sendMessage(sender, notFound);
+                        LightPlayer.of(sender).sendMessage(notFound);
                         return true;
                     }
 
@@ -171,26 +155,26 @@ public class Check implements CommandExecutor {
 
                     if (LightCheckAPI.get().getCheckedPlayers().containsKey(sender)) {
                         String already_self = plugin.getMessageConfig().getConfig().getString("errors.already-self");
-                        plugin.getMessenger().sendMessage(sender, already_self);
+                        LightPlayer.of(sender).sendMessage(already_self);
                         return true;
                     }
 
                     if (LightCheckAPI.get().getCheckedPlayers().containsValue(player)) {
                         String already = plugin.getMessageConfig().getConfig().getString("errors.already");
-                        plugin.getMessenger().sendMessage(sender, already);
+                        LightPlayer.of(sender).sendMessage(already);
                         return true;
                     }
 
                     if (player.hasPermission("lightcheck.bypass")) {
                         String already = plugin.getMessageConfig().getConfig().getString("errors.bypass").replace("<username>", player.getName());
-                        plugin.getMessenger().sendMessage(sender, already);
+                        LightPlayer.of(sender).sendMessage(already);
                         return true;
                     }
 
                     checkedPlayer.call(sender);
 
                     String call = plugin.getMessageConfig().getConfig().getString("successfully.call").replace("<username>", username);
-                    plugin.getMessenger().sendMessage(sender, call);
+                    LightPlayer.of(sender).sendMessage(call);
                 }
                 return true;
             }
@@ -204,31 +188,31 @@ public class Check implements CommandExecutor {
 
         String lang = plugin.getConfig().getString("language");
 
-        plugin.getMessenger().sendMessage(sender,"");
+        sender.sendMessage("");
         if (lang.equalsIgnoreCase("russian")) {
-            plugin.getMessenger().sendMessage(sender, " &c&m   &e&l LIGHTCHECK ПОМОЩЬ &c&m   ");
-            plugin.getMessenger().sendMessage(sender, " &c&l» &a/check list &8- &7список текущих проверок");
-            plugin.getMessenger().sendMessage(sender, " &c&l» &a/check <player> &8- &7вызвать на проверку");
-            plugin.getMessenger().sendMessage(sender, " &c&l» &a/check confirm &8- &7признаться виновным");
-            plugin.getMessenger().sendMessage(sender, " &c&l» &a/check approve &8- &7признать виновным");
-            plugin.getMessenger().sendMessage(sender, " &c&l» &a/check disprove  &8- &7признать невиновным");
-            plugin.getMessenger().sendMessage(sender, " &c&l» &a/check timer stop &8- &7отключить таймер");
-            plugin.getMessenger().sendMessage(sender, " &c&l» &a/check stop-all &8- &7отменить все текущие проверки");
-            plugin.getMessenger().sendMessage(sender, " &c&l» &a/check reload &8- &7перезагрузить конфигурации (для консоли)");
-            plugin.getMessenger().sendMessage(sender, " &c&l» &a/check reconfig &8- &7обновить конфигурации (для консоли)");
+            LightPlayer.of(sender).sendMessage(" &c&m   &e&l LIGHTCHECK ПОМОЩЬ &c&m   ");
+            LightPlayer.of(sender).sendMessage(" &c&l» &a/check list &8- &7список текущих проверок");
+            LightPlayer.of(sender).sendMessage(" &c&l» &a/check <player> &8- &7вызвать на проверку");
+            LightPlayer.of(sender).sendMessage(" &c&l» &a/check confirm &8- &7признаться виновным");
+            LightPlayer.of(sender).sendMessage(" &c&l» &a/check approve &8- &7признать виновным");
+            LightPlayer.of(sender).sendMessage(" &c&l» &a/check disprove  &8- &7признать невиновным");
+            LightPlayer.of(sender).sendMessage(" &c&l» &a/check timer stop &8- &7отключить таймер");
+            LightPlayer.of(sender).sendMessage(" &c&l» &a/check stop-all &8- &7отменить все текущие проверки");
+            LightPlayer.of(sender).sendMessage(" &c&l» &a/check reload &8- &7перезагрузить конфигурации (для консоли)");
+            LightPlayer.of(sender).sendMessage(" &c&l» &a/check reconfig &8- &7обновить конфигурации (для консоли)");
         } else {
-            plugin.getMessenger().sendMessage(sender, " &c&m   &e&l LIGHTCHECK HELP &c&m   ");
-            plugin.getMessenger().sendMessage(sender, " &c&l» &a/check list &8- &7the list of currently checking");
-            plugin.getMessenger().sendMessage(sender, " &c&l» &a/check <player> &8- &7summon to check");
-            plugin.getMessenger().sendMessage(sender, " &c&l» &a/check confirm &8- &7plead guilty");
-            plugin.getMessenger().sendMessage(sender, " &c&l» &a/check approve &8- &7find guilty");
-            plugin.getMessenger().sendMessage(sender, " &c&l» &a/check disprove  &8- &7find not guilty");
-            plugin.getMessenger().sendMessage(sender, " &c&l» &a/check timer stop &8- &7disable the timer");
-            plugin.getMessenger().sendMessage(sender, " &c&l» &a/check stop-all &8- &7cancel all current checks");
-            plugin.getMessenger().sendMessage(sender, " &c&l» &a/check reload &8- &7reload all configurations (only console)");
-            plugin.getMessenger().sendMessage(sender, " &c&l» &a/check reconfig &8- &7update all configurations (only console)");
+            LightPlayer.of(sender).sendMessage(" &c&m   &e&l LIGHTCHECK HELP &c&m   ");
+            LightPlayer.of(sender).sendMessage(" &c&l» &a/check list &8- &7the list of currently checking");
+            LightPlayer.of(sender).sendMessage(" &c&l» &a/check <player> &8- &7summon to check");
+            LightPlayer.of(sender).sendMessage(" &c&l» &a/check confirm &8- &7plead guilty");
+            LightPlayer.of(sender).sendMessage(" &c&l» &a/check approve &8- &7find guilty");
+            LightPlayer.of(sender).sendMessage(" &c&l» &a/check disprove  &8- &7find not guilty");
+            LightPlayer.of(sender).sendMessage(" &c&l» &a/check timer stop &8- &7disable the timer");
+            LightPlayer.of(sender).sendMessage(" &c&l» &a/check stop-all &8- &7cancel all current checks");
+            LightPlayer.of(sender).sendMessage(" &c&l» &a/check reload &8- &7reload all configurations (only console)");
+            LightPlayer.of(sender).sendMessage(" &c&l» &a/check reconfig &8- &7update all configurations (only console)");
         }
-        plugin.getMessenger().sendMessage(sender,"");
+        sender.sendMessage("");
     }
 
 

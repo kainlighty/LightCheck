@@ -1,13 +1,11 @@
 package ru.kainlight.lightcheck;
 
 import lombok.Getter;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import ru.kainlight.lightcheck.COMMANDS.Check;
-import ru.kainlight.lightcheck.COMMON.lightlibrary.CONFIGS.CustomConfig;
+import ru.kainlight.lightcheck.COMMON.lightlibrary.CONFIGS.BukkitConfig;
 import ru.kainlight.lightcheck.COMMON.lightlibrary.UTILS.Initiators;
-import ru.kainlight.lightcheck.COMMON.lightlibrary.UTILS.Messenger;
 import ru.kainlight.lightcheck.EVENTS.CheckedListener;
 import ru.kainlight.lightcheck.UTILS.Runnables;
 
@@ -18,23 +16,20 @@ public final class Main extends JavaPlugin {
 
     @Getter
     private static Main instance;
-    private BukkitAudiences audience;
 
-    public CustomConfig messageConfig;
-    private Messenger messenger;
+    public BukkitConfig messageConfig;
     private Runnables runnables;
 
     @Override
     public void onLoad() {
         saveDefaultConfig();
-        CustomConfig.saveLanguages(this,"language");
+        BukkitConfig.saveLanguages(this,"language");
     }
 
     @Override
     public void onEnable() {
         instance = this;
 
-        messenger = new Messenger(this);
         runnables = new Runnables(this);
 
         getCommand("lightcheck").setExecutor(new Check(this));

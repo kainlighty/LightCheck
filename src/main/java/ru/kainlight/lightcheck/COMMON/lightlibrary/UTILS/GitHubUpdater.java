@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import ru.kainlight.lightcheck.COMMON.lightlibrary.LightLib;
 import ru.kainlight.lightcheck.Main;
 
 import java.io.BufferedReader;
@@ -11,12 +12,12 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public final class GitHubUpdater {
+final class GitHubUpdater {
 
     private final Main plugin;
 
     @SuppressWarnings("deprecation")
-    public GitHubUpdater(Main plugin) {
+    GitHubUpdater(Main plugin) {
         this.plugin = plugin;
         this.pluginName = plugin.getDescription().getName();
         this.currentVersion = plugin.getDescription().getVersion();
@@ -30,6 +31,8 @@ public final class GitHubUpdater {
     private String resourceURL;
 
     private boolean checkForUpdates() {
+        if(!plugin.getConfig().getBoolean("update-notification")) return false;
+
         String githubRepo = "kainlighty/" + pluginName;
         try {
             String url = "https://api.github.com/repos/" + githubRepo + "/releases";
@@ -47,7 +50,7 @@ public final class GitHubUpdater {
                 responseBuilder.append(line);
             }
             reader.close();
-            input.close(); // ! added
+            input.close();
 
             JsonElement jsonElement = new JsonParser().parse(responseBuilder.toString());
             JsonArray jsonArray = jsonElement.getAsJsonArray();
@@ -102,7 +105,7 @@ public final class GitHubUpdater {
             String newVersion = latestVersion;
             if (isPrerelease) newVersion += " #d29922(Pre-release)";
 
-            plugin.getMessenger().logger("&c ! New version found: " + newVersion)
+            LightLib.get().logger("&c ! New version found: " + newVersion)
                     .logger("&c ! Recommended for installation: &7" + resourceURL);
 
         }

@@ -1,6 +1,5 @@
 package ru.kainlight.lightcheck.EVENTS;
 
-import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -9,6 +8,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.*;
 import ru.kainlight.lightcheck.API.LightCheckAPI;
+import ru.kainlight.lightcheck.COMMON.lightlibrary.LightPlayer;
 import ru.kainlight.lightcheck.Main;
 
 import java.util.List;
@@ -88,7 +88,7 @@ public class CheckedListener implements Listener {
                     .replace("<username>", player.getName())
                     .replace("<message>", event.getMessage());
 
-            plugin.getMessenger().sendMessage(privateDialog, player, staff);
+            LightPlayer.sendMessage(privateDialog, player, staff);
         }
     }
 
@@ -121,15 +121,6 @@ public class CheckedListener implements Listener {
 
     @EventHandler
     public void onPickupArrowChecked(PlayerPickupArrowEvent event) {
-        Player player = event.getPlayer();
-
-        if (isCheckingAndAbilityEnabled(player, "block-pickup")) {
-            event.setCancelled(true);
-        }
-    }
-
-    @EventHandler
-    public void onPickupExpChecked(PlayerPickupExperienceEvent event) {
         Player player = event.getPlayer();
 
         if (isCheckingAndAbilityEnabled(player, "block-pickup")) {

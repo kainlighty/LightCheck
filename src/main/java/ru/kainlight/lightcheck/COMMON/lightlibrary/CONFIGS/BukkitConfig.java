@@ -16,18 +16,18 @@ import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-public final class CustomConfig {
+public final class BukkitConfig {
     private final Main plugin;
     private final String fileName;
     private final String subdirectory;
     private File configFile;
     private FileConfiguration fileConfiguration;
 
-    public CustomConfig(Main plugin, String fileName) {
+    public BukkitConfig(Main plugin, String fileName) {
         this(plugin, null, fileName);
     }
 
-    public CustomConfig(Main plugin, String subdirectory, String fileName) {
+    public BukkitConfig(Main plugin, String subdirectory, String fileName) {
         this.plugin = plugin;
         this.subdirectory = subdirectory;
         this.fileName = fileName;
@@ -90,14 +90,14 @@ public final class CustomConfig {
 
         if (!lang.equalsIgnoreCase(fileName.replace(".yml", ""))) {
             String langFile = lang + ".yml";
-            plugin.messageConfig = new CustomConfig(plugin, "messages", langFile.toLowerCase());
+            plugin.messageConfig = new BukkitConfig(plugin, "messages", langFile.toLowerCase());
             plugin.messageConfig.reloadConfig();
         }
     }
 
     public static void saveLanguages(Main plugin, String pathToLang) {
         // Получить URL папки messages внутри JAR
-        URL url = CustomConfig.class.getResource("/messages");
+        URL url = BukkitConfig.class.getResource("/messages");
         if (url != null) {
             try {
                 // Создать подключение к этому URL
@@ -113,7 +113,7 @@ public final class CustomConfig {
                         // Если элемент - файл в папке messages, то сохранить его
                         if (entry.getName().startsWith("messages/") && entry.getName().endsWith(".yml")) {
                             String fileName = entry.getName().substring("messages/".length());
-                            plugin.messageConfig = new CustomConfig(plugin, "messages", fileName);
+                            plugin.messageConfig = new BukkitConfig(plugin, "messages", fileName);
                             plugin.messageConfig.saveDefaultConfig();
                         }
                     }
@@ -123,7 +123,7 @@ public final class CustomConfig {
             }
         }
         String langFile = plugin.getConfig().getString(pathToLang) + ".yml";
-        plugin.messageConfig = new CustomConfig(plugin, "messages", langFile.toLowerCase());
+        plugin.messageConfig = new BukkitConfig(plugin, "messages", langFile.toLowerCase());
     }
 
     @SuppressWarnings("all")

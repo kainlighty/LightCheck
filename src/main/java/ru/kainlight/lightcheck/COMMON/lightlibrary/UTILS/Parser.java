@@ -7,6 +7,8 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,6 +47,13 @@ public final class Parser {
         return hex(serializedMessage);
     }
 
+    public String hexString(String message) {
+        if(message == null) return "";
+
+        Component serializedMessage = hex(message);
+        return LegacyComponentSerializer.legacySection().serialize(serializedMessage);
+    }
+
     public String hexString(Component message) {
         if(message == null) return "";
 
@@ -52,11 +61,15 @@ public final class Parser {
         return hexString(serializedMessage);
     }
 
-    public String hexString(String message) {
-        if(message == null) return "";
+    public List<String> hexString(List<String> messages) {
+        if(messages.isEmpty()) return List.of("");
+        List<String> copyMessages = new ArrayList<>();
+        messages.forEach(message -> {
+            String s = hexString(message);
+            copyMessages.add(s);
+        });
 
-        Component serializedMessage = hex(message);
-        return LegacyComponentSerializer.legacySection().serialize(serializedMessage);
+        return copyMessages;
     }
 
     public String replacedString(@NotNull Component text, String replaceOn, String replaceable) {

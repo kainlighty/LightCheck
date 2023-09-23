@@ -4,6 +4,7 @@ import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import ru.kainlight.lightcheck.API.LightCheckAPI;
+import ru.kainlight.lightcheck.COMMON.lightlibrary.LightPlayer;
 import ru.kainlight.lightcheck.COMMON.lightlibrary.UTILS.Parser;
 import ru.kainlight.lightcheck.Main;
 
@@ -24,7 +25,7 @@ public final class Bossbar {
         Long playerTimer = LightCheckAPI.get().getTimer().get(player);
 
         if(playerTimer == null || playerTimer <= 0) {
-            plugin.getMessenger().hideBossBar(player, bossBar);
+            LightPlayer.of(player).hideBossBar(bossBar);
             return;
         }
 
@@ -33,7 +34,7 @@ public final class Bossbar {
         bossBar.name(nameComponent);
         bossBar.progress((float) playerTimer / timer);
 
-        plugin.getMessenger().showBossBar(player, bossBar);
+        LightPlayer.of(player).showBossBar(bossBar);
     }
 
 

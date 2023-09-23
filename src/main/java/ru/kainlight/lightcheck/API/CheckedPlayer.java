@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import ru.kainlight.lightcheck.COMMON.Others;
+import ru.kainlight.lightcheck.COMMON.lightlibrary.LightPlayer;
 import ru.kainlight.lightcheck.Main;
 
 import java.util.List;
@@ -43,7 +44,7 @@ public final class CheckedPlayer {
         plugin.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) return;
 
-        player.clearTitle();
+        LightPlayer.of(player).clearTitle();
         plugin.getRunnables().stopAll(player);
         LightCheckAPI.get().getCheckedPlayers().inverse().remove(player);
         player.setInvulnerable(false);

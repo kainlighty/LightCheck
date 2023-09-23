@@ -1,8 +1,10 @@
 package ru.kainlight.lightcheck.COMMON.lightlibrary;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import ru.kainlight.lightcheck.COMMON.lightlibrary.UTILS.GitHubUpdater;
+import org.jetbrains.annotations.NotNull;
+import ru.kainlight.lightcheck.COMMON.lightlibrary.UTILS.Parser;
 import ru.kainlight.lightcheck.Main;
 
 import java.io.InputStream;
@@ -12,8 +14,12 @@ import java.nio.charset.StandardCharsets;
 public final class LightLib {
     private LightLib() {}
 
+    public static LightLib get() {
+        return new LightLib();
+    }
+
     @SuppressWarnings("all")
-    public static void updateConfig(Main plugin) {
+    public void updateConfig(Main plugin) {
         // Загрузка текущей конфигурации
         FileConfiguration userConfig = plugin.getConfig();
 
@@ -39,9 +45,28 @@ public final class LightLib {
         plugin.saveConfig();
     }
 
-    public static void startUpdater() {
-        if(!Main.getInstance().getConfig().getBoolean("update-notification")) return;
-        new GitHubUpdater(Main.getInstance()).start();
+    public LightLib logger(@NotNull String message) {
+        String messageComponent = Parser.get().hexString(message);
+        Bukkit.getServer().getConsoleSender().sendMessage(messageComponent);
+        return this;
+    }
+
+    public static boolean isVersion(String number) {
+        return Bukkit.getServer().getVersion().contains(number);
+    }
+
+    public static boolean higher(double number) {
+        return Integer.parseInt(Bukkit.getServer().getVersion()) >= number;
+    }
+
+    public boolean isPaper() {
+        try {
+            // Any other works, just the shortest I could find.
+            Class.forName("com.destroystokyo.paper.ParticleBuilder");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 
 }

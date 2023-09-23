@@ -3,6 +3,7 @@ package ru.kainlight.lightcheck.UTILS;
 import org.bukkit.entity.Player;
 import ru.kainlight.lightcheck.API.CheckedPlayer;
 import ru.kainlight.lightcheck.API.LightCheckAPI;
+import ru.kainlight.lightcheck.COMMON.lightlibrary.LightPlayer;
 import ru.kainlight.lightcheck.Main;
 
 import java.util.HashMap;
@@ -127,14 +128,14 @@ public final class Runnables {
                         .replace("<inspector>", inspector.getName())
                         .replace("<minutes>", secToMin.toString());
 
-                plugin.getMessenger().sendClickableHoverMessage(player, message, hoverMessage, "/check confirm");
+                LightPlayer.of(player).sendClickableHoverMessage(message, hoverMessage, "/check confirm");
             });
         } else {
             List<String> without_timer = plugin.getMessageConfig().getConfig().getStringList("chat.without-timer");
             without_timer.forEach(message -> {
                 message = message.replace("<inspector>", inspector.getName());
 
-                plugin.getMessenger().sendClickableHoverMessage(player, message, hoverMessage, "/check confirm");
+                LightPlayer.of(player).sendClickableHoverMessage(message, hoverMessage, "/check confirm");
             });
         }
     }
@@ -152,7 +153,7 @@ public final class Runnables {
         if (titleEnabled) {
             String titleMessage = plugin.getMessageConfig().getConfig().getString("screen.check-title");
             String subTitleMessage = plugin.getMessageConfig().getConfig().getString("screen.check-subtitle");
-            plugin.getMessenger().sendTitle(player, titleMessage, subTitleMessage, 1, 15, 2);
+            LightPlayer.of(player).sendTitle(titleMessage, subTitleMessage, 1, 15, 2);
         }
 
         boolean actionbarEnabled = plugin.getConfig().getBoolean("settings.actionbar");
@@ -160,7 +161,7 @@ public final class Runnables {
         if (actionbarEnabled && timer != null) {
             String message = plugin.getMessageConfig().getConfig().getString("screen.actionbar")
                     .replace("<seconds>", timer.toString());
-            plugin.getMessenger().sendActionbar(player, message);
+            LightPlayer.of(player).sendActionbar( message);
         }
     }
 
