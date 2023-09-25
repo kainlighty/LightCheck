@@ -9,8 +9,8 @@ import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import ru.kainlight.lightcheck.COMMON.lightlibrary.UTILS.Parser;
+import ru.kainlight.lightcheck.Main;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -19,7 +19,7 @@ import java.util.List;
 @SuppressWarnings("unused")
 public final class LightPlayer {
 
-    private static BukkitAudiences audience;
+    private static final BukkitAudiences audience = BukkitAudiences.create(Main.getInstance());
     private final CommandSender sender;
 
     private LightPlayer(CommandSender sender) {
@@ -35,29 +35,17 @@ public final class LightPlayer {
 
         Component mainComponent = Parser.get().hex(message);
         Component hoverComponent = Parser.get().hex(hover);
-
         Component component = mainComponent
                 .clickEvent(ClickEvent.runCommand(command))
                 .hoverEvent(HoverEvent.showText(hoverComponent));
-
-        if(audience == null) {
-            sender.sendMessage(component);
-            return;
-        }
 
         audience.sender(sender).sendMessage(component);
     }
 
     public void sendClickableMessage(String message, String command) {
         if(message == null) return;
-
-        Component component = Parser.get().hex(message)
-                .clickEvent(ClickEvent.runCommand(command));
-
-        if(audience == null) {
-            sender.sendMessage(component);
-            return;
-        }
+        Component component = Parser.get().hex(message);
+        component = component.clickEvent(ClickEvent.runCommand(command));
 
         audience.sender(sender).sendMessage(component);
     }
@@ -67,25 +55,13 @@ public final class LightPlayer {
 
         Component component = Parser.get().hex(message);
         for (Player player : players) {
-
-            if(audience == null) {
-                player.sendMessage(component);
-                return;
-            } else {
-                audience.player(player).sendMessage(component);
-            }
+            audience.player(player).sendMessage(component);
         }
     }
 
     public void sendMessage(String message) {
         if(message == null) return;
-
         Component component = Parser.get().hex(message);
-
-        if(audience == null) {
-            sender.sendMessage(component);
-            return;
-        }
 
         audience.sender(sender).sendMessage(component);
     }
@@ -98,13 +74,7 @@ public final class LightPlayer {
 
     public void sendActionbar(String message) {
         if(message == null) return;
-
         Component component = Parser.get().hex(message);
-
-        if(audience == null) {
-            sender.sendActionBar(component);
-            return;
-        }
 
         audience.sender(sender).sendActionBar(component);
     }
@@ -114,13 +84,7 @@ public final class LightPlayer {
 
         Component component = Parser.get().hex(message);
         Component hoverComponent = Parser.get().hex(hover);
-
         component = component.hoverEvent(HoverEvent.showText(hoverComponent));
-
-        if(audience == null) {
-            sender.sendMessage(component);
-            return;
-        }
 
         audience.sender(sender).sendMessage(component);
     }
@@ -133,43 +97,22 @@ public final class LightPlayer {
         Title.Times times = Title.Times.of(Duration.ofSeconds(fadeIn), Duration.ofSeconds(stay), Duration.ofSeconds(fadeOut));
         Title titleToSend = Title.title(titleComponent, subtitleComponent, times);
 
-        if(audience == null) {
-            sender.showTitle(titleToSend);
-            return;
-        }
-
         audience.sender(sender).showTitle(titleToSend);
     }
 
     public void sendTitle(Component title, Component subTitle) {
         Title resultTitle = Title.title(title, subTitle);
-        if(audience == null) {
-            sender.showTitle(resultTitle);
-            return;
-        }
         audience.sender(sender).showTitle(resultTitle);
     }
 
     public void clearTitle() {
-        if(audience == null) {
-            sender.clearTitle();
-            return;
-        }
         audience.sender(sender).clearTitle();
     }
 
     public void showBossBar(BossBar bossBar) {
-        if(audience == null) {
-            sender.showBossBar(bossBar);
-            return;
-        }
         audience.sender(sender).showBossBar(bossBar);
     }
     public void hideBossBar(BossBar bossBar) {
-        if(audience == null) {
-            sender.hideBossBar(bossBar);
-            return;
-        }
         audience.sender(sender).hideBossBar(bossBar);
     }
 
@@ -177,14 +120,7 @@ public final class LightPlayer {
         if(message == null) return;
         Component component = Parser.get().hex(message);
 
-        Bukkit.getServer().getOnlinePlayers().forEach(online -> {
-
-            if(audience == null) {
-                online.sendMessage(component);
-            } else {
-                audience.player(online).sendMessage(component);
-            }
-        });
+        Bukkit.getServer().getOnlinePlayers().forEach(online -> audience.player(online).sendMessage(component));
     }
 
     public static void sendMessageForAll(List<String> messages) {
@@ -193,11 +129,7 @@ public final class LightPlayer {
         Bukkit.getServer().getOnlinePlayers().forEach(online -> {
             messages.forEach(message -> {
                 Component component = Parser.get().hex(message);
-                if(audience == null) {
-                    online.sendMessage(component);
-                } else {
-                    audience.player(online).sendMessage(component);
-                }
+                audience.player(online).sendMessage(component);
             });
         });
     }
@@ -208,12 +140,6 @@ public final class LightPlayer {
         if(messages.isEmpty()) return;
 
         sendMessageForAll(messages);
-    }
-
-    public static void registerAudience(Plugin plugin) {
-        try {
-            audience = BukkitAudiences.create(plugin);
-        } catch (NoSuchMethodError e) {}
     }
 
 }

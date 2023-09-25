@@ -59,7 +59,7 @@ public final class LightLib {
         return Integer.parseInt(Bukkit.getServer().getVersion()) >= number;
     }
 
-    public boolean isPaper() {
+    public static boolean isPaper() {
         try {
             // Any other works, just the shortest I could find.
             Class.forName("com.destroystokyo.paper.ParticleBuilder");
