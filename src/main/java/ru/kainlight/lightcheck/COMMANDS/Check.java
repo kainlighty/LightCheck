@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import ru.kainlight.lightcheck.API.CheckedPlayer;
 import ru.kainlight.lightcheck.API.LightCheckAPI;
-import ru.kainlight.lightcheck.COMMON.lightlibrary.LightLib;
 import ru.kainlight.lightcheck.COMMON.lightlibrary.LightPlayer;
 import ru.kainlight.lightcheck.Main;
 
@@ -22,7 +21,6 @@ public class Check implements CommandExecutor {
 
     public Check(Main plugin) {
         this.plugin = plugin;
-        plugin.getCommand("lightcheck").setTabCompleter(new Completer(plugin));
     }
 
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, String label, String[] args) {
@@ -42,13 +40,6 @@ public class Check implements CommandExecutor {
                 plugin.getMessageConfig().reloadConfig();
 
                 plugin.getLogger().info("-- Configurations reloaded --");
-                return true;
-            }
-            if (args[0].equalsIgnoreCase("reconfig")) {
-                LightLib.get().updateConfig(plugin);
-                plugin.messageConfig.updateConfig();
-
-                plugin.getLogger().info("-- Configurations updated --");
                 return true;
             }
         }
@@ -216,7 +207,7 @@ public class Check implements CommandExecutor {
     }
 
 
-    final class Completer implements TabCompleter {
+    public static final class Completer implements TabCompleter {
 
         private final Main plugin;
 

@@ -8,12 +8,11 @@ import ru.kainlight.lightcheck.Main;
 public final class Initiators {
 
     public static void startPluginMessage(Plugin plugin) {
-        LightLib.get().logger("");
-
-        LightLib.get().logger("&c » &7" + plugin.getDescription().getName() + " enabled")
+        LightLib.get()
+                .logger("")
+                .logger("&c » &7" + plugin.getDescription().getName() + " enabled")
                 .logger("&c » &7Version: " + plugin.getDescription().getVersion());
         new GitHubUpdater(Main.getInstance()).start();
-
         LightLib.get().logger("");
     }
 }

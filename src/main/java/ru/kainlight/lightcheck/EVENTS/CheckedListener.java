@@ -26,14 +26,12 @@ public class CheckedListener implements Listener {
         Player player = event.getPlayer();
 
         if (LightCheckAPI.get().isChecking(player)) {
-            plugin.getRunnables().stopMessages(player);
+            LightCheckAPI.get().getCheckedPlayer(player).approve();
             List<String> quitCommands = plugin.getConfig().getStringList("commands.quit");
             boolean abilityEnabled = !quitCommands.isEmpty();
 
             if (abilityEnabled) {
                 quitCommands.forEach(command -> plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command.replace("<player>", player.getName())));
-                LightCheckAPI.get().getCheckedPlayers().inverse().remove(player);
-                plugin.getRunnables().stopAll(player);
             }
 
         }
@@ -44,7 +42,7 @@ public class CheckedListener implements Listener {
         Player player = event.getPlayer();
 
         if (LightCheckAPI.get().isChecking(player)) {
-            plugin.getRunnables().stopMessages(player);
+            LightCheckAPI.get().getCheckedPlayer(player).approve();
             List<String> kickCommands = plugin.getConfig().getStringList("commands.kick");
             boolean abilityEnabled = !kickCommands.isEmpty();
 
@@ -53,8 +51,6 @@ public class CheckedListener implements Listener {
 
                 if (timer != null && timer.get(player) >= 0) {
                     kickCommands.forEach(command -> plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command.replace("<player>", player.getName())));
-                    LightCheckAPI.get().getCheckedPlayers().inverse().remove(player);
-                    plugin.getRunnables().stopAll(player);
                 }
             }
 
@@ -97,7 +93,7 @@ public class CheckedListener implements Listener {
         Player player = event.getPlayer();
 
         if (isCheckingAndAbilityEnabled(player, "block-move")) {
-            event.setCancelled(true);
+            event.setTo(event.getFrom());
         }
     }
 

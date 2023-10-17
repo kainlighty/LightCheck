@@ -7,6 +7,7 @@
 # lightcheck.stop-all - /check stop-all > Stop all checks now
 # lightcheck.check.bypass > protection against a call for verification
 
+config-version: 1.0
 # only when the server is turned on
 update-notification: true
 
@@ -33,13 +34,13 @@ abilities:
   block-chat:
     enable: true
     allowed-commands:
-      - 'check'
+      - "check"
 
 # Example for disable: approve: []
 commands:
   approve: # If the PLAYER pleads guilty or the STAFF recognizes the player as a cheater
-    - 'kick <player> Recognition of the use of cheats'
+    - "kick <player> Recognition of the use of cheats"
   quit:
-    - 'kick <player> Exit from verification'
+    - "kick <player> Exit from verification"
   kick:
-    - 'kick <player> Kicked from this server'
+    - "kick <player> Kicked from this server"
