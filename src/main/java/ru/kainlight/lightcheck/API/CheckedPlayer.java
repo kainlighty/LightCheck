@@ -40,7 +40,7 @@ public final class CheckedPlayer {
         if(player == null) return;
         if (!LightCheckAPI.get().isChecking(player)) return;
 
-        var event = new LightCheckAPI.PlayerDisproveCheckEvent(player);
+        var event = new LightCheckAPI.PlayerApproveCheckEvent(player);
         plugin.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) return;
 
@@ -48,20 +48,13 @@ public final class CheckedPlayer {
         plugin.getRunnables().stopAll(player);
         LightCheckAPI.get().getCheckedPlayers().inverse().remove(player);
         player.setInvulnerable(false);
-
-        List<String> getApproveCommands = plugin.getConfig().getStringList("commands.approve");
-        if(!getApproveCommands.isEmpty()) {
-            getApproveCommands.forEach(approveCommands -> {
-                plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), approveCommands.replace("<player>", player.getName()));
-            });
-        }
     }
 
     public void disprove() {
         if(player == null) return;
         if (!LightCheckAPI.get().isChecking(player)) return;
 
-        var event = new LightCheckAPI.PlayerApproveCheckEvent(player);
+        var event = new LightCheckAPI.PlayerDisproveCheckEvent(player);
         plugin.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) return;
 

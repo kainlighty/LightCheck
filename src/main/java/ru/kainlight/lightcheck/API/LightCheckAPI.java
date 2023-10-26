@@ -33,7 +33,7 @@ public final class LightCheckAPI {
     @Getter
     private final HashBiMap<Player, Player> checkedPlayers = HashBiMap.create();
     @Getter
-    private final ConcurrentHashMap<Player, Long> timer = new ConcurrentHashMap<>();
+    private final Map<Player, Long> timer = new ConcurrentHashMap<>();
     @Getter
     private final Map<Player, Location> previousLocation = new HashMap<>();
 

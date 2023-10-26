@@ -85,6 +85,13 @@ public class Check implements CommandExecutor {
                 LightPlayer.of(sender).sendMessage(approve_staff);
 
                 checkedPlayer.approve();
+
+                List<String> getApproveCommands = plugin.getConfig().getStringList("commands.approve");
+                if(!getApproveCommands.isEmpty()) {
+                    getApproveCommands.forEach(approveCommands -> {
+                        plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), approveCommands.replace("<player>", checkedPlayer.getPlayer().getName()));
+                    });
+                }
             }
             case "disprove" -> {
                 if (!(sender.hasPermission("lightcheck.disprove"))) return true;

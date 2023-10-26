@@ -15,6 +15,8 @@ public final class Bossbar {
     private final BossBar bossBar;
     private final long timer;
 
+    private final boolean enabled = Main.getInstance().getConfig().getBoolean("settings.bossbar");
+
     public Bossbar(Main plugin, long timer) {
         this.plugin = plugin;
         this.timer = timer;
@@ -22,6 +24,7 @@ public final class Bossbar {
     }
 
     public void sendBossbar(Player player) {
+        if(!enabled) return;
         Long playerTimer = LightCheckAPI.get().getTimer().get(player);
 
         if(playerTimer == null || playerTimer <= 0) {

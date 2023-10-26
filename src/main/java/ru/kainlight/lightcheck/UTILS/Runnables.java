@@ -45,16 +45,18 @@ public final class Runnables {
     public void stopTimer(Player player) {
         if (player == null) return;
 
-        plugin.getServer().getScheduler().cancelTask(clockTimerScheduler.get(player));
-        clockTimerScheduler.remove(player);
+        Integer taskID = clockTimerScheduler.remove(player);
+        plugin.getServer().getScheduler().cancelTask(taskID);
         LightCheckAPI.get().getTimer().remove(player);
     }
 
     public void stopAll(Player player) {
-        stopTimer(player);
         stopMessages(player);
-    }
 
+        if(clockTimerScheduler.get(player) != null) {
+            stopTimer(player);
+        }
+    }
 
     public void startTimerScheduler(Player player, long timer) {
         CheckedPlayer checkedPlayer = LightCheckAPI.get().getCheckedPlayer(player);
@@ -94,17 +96,13 @@ public final class Runnables {
     public void startScreenMessageScheduler(Player player, long timer) {
         Bossbar bossBar = new Bossbar(plugin, timer);
 
-        messageScreenTimer.put(player, plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+        messageScreenTimer.put(player, plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
             if(player == null) return;
 
             this.screenMessages(player);
             bossBar.sendBossbar(player);
         }, 0L, 20L).getTaskId());
     }
-
-
-
-
 
 
     private void chatMessage(Player player) {
