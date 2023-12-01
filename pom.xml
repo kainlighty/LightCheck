@@ -43,6 +43,14 @@
         <url>https://github.com/kainlighty/LightCheck/issues</url>
     </issueManagement>
 
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/kainlighty/github-releases</url>
+        </repository>
+    </distributionManagement>
+
     <properties>
         <java.version>16</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
