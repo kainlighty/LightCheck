@@ -37,6 +37,8 @@ permissions:
       lightcheck.timer.stop: true
   lightcheck.stop-all:
     default: op
+  lightcheck.reload:
+    default: op
   lightcheck.admin:
     children:
       lightcheck.list: true
@@ -46,3 +48,4 @@ permissions:
       lightcheck.disprove: true
       lightcheck.timer.*: true
       lightcheck.stop-all: true
+      lightcheck.reload: true
