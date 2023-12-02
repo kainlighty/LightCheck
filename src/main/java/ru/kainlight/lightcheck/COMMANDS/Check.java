@@ -28,11 +28,11 @@ public class Check implements CommandExecutor {
         if (args.length == 0) {
             if(!commandSender.hasPermission("lightcheck.approve")) return true;
 
-            sendHelpMessage(commandSender);
+            this.sendHelpMessage(commandSender);
             return true;
         }
 
-        if (args.length == 1 && commandSender instanceof CommandSender) {
+        if (args.length == 1 && !(commandSender instanceof Player)) {
             if (args[0].equalsIgnoreCase("reload")) {
                 plugin.saveDefaultConfig();
                 plugin.getMessageConfig().saveDefaultConfig();
@@ -40,8 +40,9 @@ public class Check implements CommandExecutor {
                 plugin.getMessageConfig().reloadConfig();
 
                 plugin.getLogger().info("-- Configurations reloaded --");
-                return true;
             }
+
+            return true;
         }
 
         if (!(commandSender instanceof Player sender)) return true;
@@ -76,7 +77,7 @@ public class Check implements CommandExecutor {
 
                 List<String> getApproveCommands = plugin.getConfig().getStringList("commands.approve");
                 if(!getApproveCommands.isEmpty()) {
-                    getApproveCommands.forEach(approveCommands -> plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), approveCommands.replace("<player>", checkedPlayer.getPlayer().getName())));
+                    getApproveCommands.forEach(commands -> plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), commands.replace("<player>", checkedPlayer.getPlayer().getName())));
                 }
             }
             case "approve" -> {
@@ -119,6 +120,7 @@ public class Check implements CommandExecutor {
                 checkedPlayer.disprove();
             }
             case "timer" -> {
+                if (!LightCheckAPI.get().isChecking(sender)) return true;
                 CheckedPlayer checkedPlayer = LightCheckAPI.get().getCheckedPlayerByInspector(sender);
 
                 if (args[1].equalsIgnoreCase("stop")) {

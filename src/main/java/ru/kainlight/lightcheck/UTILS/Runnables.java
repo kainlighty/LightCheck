@@ -76,7 +76,14 @@ public final class Runnables {
                 if (timerValue >= 1) {
                     checkedPlayer.setTimer(timerValue - 1);
                 } else {
-                    plugin.getServer().getScheduler().runTask(plugin, checkedPlayer::approve);
+                    plugin.getServer().getScheduler().runTask(plugin, () -> {
+                        checkedPlayer.approve();
+                        List<String> getApproveCommands = plugin.getConfig().getStringList("commands.approve");
+                        if(!getApproveCommands.isEmpty()) {
+                            getApproveCommands.forEach(commands -> plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), commands.replace("<player>", checkedPlayer.getPlayer().getName())));
+                        }
+                    });
+
                     return;
                 }
 
