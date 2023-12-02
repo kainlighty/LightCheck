@@ -46,7 +46,7 @@
 | lightcheck.bypass            | Prohibit checking players with this permission |
 | lightcheck.admin             | Full access to the plugin                      |
 
-## › [API](https://github.com/kainlighty/LightVanish/tree/main/src/main/java/ru/kainlight/lightcheck/API)
+## › [API](https://github.com/kainlighty/LightCheck/tree/master/src/main/java/ru/kainlight/lightcheck/API)
 ```
 <repository>
     <id>jitpack.io</id>
