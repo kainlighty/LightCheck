@@ -1,5 +1,10 @@
 package ru.kainlight.lightcheck.UTILS;
 
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import ru.kainlight.lightcheck.API.CheckedPlayer;
 import ru.kainlight.lightcheck.API.LightCheckAPI;
@@ -18,6 +23,7 @@ public final class Runnables {
     public Map<Player, Integer> messageChatTimer = new HashMap<>();
     public Map<Player, Integer> messageScreenTimer = new HashMap<>();
     public Map<Player, Integer> clockTimerScheduler = new HashMap<>();
+    public Map<Player, Integer> bossbarScheduler = new HashMap<>();
 
     public Runnables(Main plugin) {
         this.plugin = plugin;
@@ -30,7 +36,8 @@ public final class Runnables {
 
         startTimerScheduler(player, timer);
         startChatMessageScheduler(player);
-        startScreenMessageScheduler(player, timer);
+        startScreenMessageScheduler(player);
+        startBossBarScheduler(player, timer);
     }
 
     public void stopMessages(Player player) {
@@ -100,17 +107,18 @@ public final class Runnables {
         }, 0L, schedulerTimer).getTaskId());
     }
 
-    public void startScreenMessageScheduler(Player player, long timer) {
-        Bossbar bossBar = new Bossbar(plugin, timer);
-
+    public void startScreenMessageScheduler(Player player) {
         messageScreenTimer.put(player, plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
             if(player == null) return;
 
             this.screenMessages(player);
-            bossBar.sendBossbar(player);
         }, 0L, 20L).getTaskId());
     }
 
+    public void startBossBarScheduler(Player player, long timer) {
+        Bossbar bossBar = new Bossbar(plugin, player, timer);
+        bossbarScheduler.put(player, plugin.getServer().getScheduler().runTaskTimer(plugin, bossBar::show, 0L, 20L).getTaskId());
+    }
 
     private void chatMessage(Player player) {
         String hoverMessage = plugin.getMessageConfig().getConfig().getString("chat.hover");
