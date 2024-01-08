@@ -2,6 +2,8 @@
 
 ![HEADER](https://github.com/kainlighty/LightCheck/assets/111251772/0c09dea4-88c0-45e7-99ae-db4b472b6f33)
 
+### › [Download for 1.16](https://github.com/kainlighty/LightCheck/releases/download/2.0.7/LightCheck-2.0.7.jar)
+
 ## › Features
 
 - #### Russian and English language support

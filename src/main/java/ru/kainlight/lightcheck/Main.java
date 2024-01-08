@@ -1,6 +1,7 @@
 package ru.kainlight.lightcheck;
 
 import lombok.Getter;
+import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import ru.kainlight.lightcheck.COMMANDS.Check;
 import ru.kainlight.lightcheck.COMMON.lightlibrary.CONFIGS.BukkitConfig;
@@ -39,6 +40,7 @@ public final class Main extends LightPlugin {
 
     @Override
     public void onDisable() {
+        HandlerList.unregisterAll(this);
         this.getServer().getScheduler().cancelTasks(this);
     }
 

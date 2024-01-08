@@ -202,7 +202,6 @@ public class Check implements CommandExecutor {
             LightPlayer.of(sender).sendMessage(" &c&l» &a/check timer stop &8- &7отключить таймер");
             LightPlayer.of(sender).sendMessage(" &c&l» &a/check stop-all &8- &7отменить все текущие проверки");
             LightPlayer.of(sender).sendMessage(" &c&l» &a/check reload &8- &7перезагрузить конфигурации (для консоли)");
-            LightPlayer.of(sender).sendMessage(" &c&l» &a/check reconfig &8- &7обновить конфигурации (для консоли)");
         } else {
             LightPlayer.of(sender).sendMessage(" &c&m   &e&l LIGHTCHECK HELP &c&m   ");
             LightPlayer.of(sender).sendMessage(" &c&l» &a/check list &8- &7the list of currently checking");
@@ -213,7 +212,6 @@ public class Check implements CommandExecutor {
             LightPlayer.of(sender).sendMessage(" &c&l» &a/check timer stop &8- &7disable the timer");
             LightPlayer.of(sender).sendMessage(" &c&l» &a/check stop-all &8- &7cancel all current checks");
             LightPlayer.of(sender).sendMessage(" &c&l» &a/check reload &8- &7reload all configurations (only console)");
-            LightPlayer.of(sender).sendMessage(" &c&l» &a/check reconfig &8- &7update all configurations (only console)");
         }
         sender.sendMessage("");
     }
