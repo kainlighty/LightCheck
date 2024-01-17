@@ -36,7 +36,7 @@ permissions:
   lightcheck.timer.*:
     default: op
     children:
-      lightcheck.timer.add: true
+      lightcheck.timer.continue: true
       lightcheck.timer.stop: true
   lightcheck.stop-all:
     default: op
