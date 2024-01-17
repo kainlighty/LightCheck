@@ -23,6 +23,7 @@ public final class LightPlayer {
 
     @Getter
     private static final BukkitAudiences audience = BukkitAudiences.create(Main.getInstance());
+    @Getter
     private final Audience sender;
 
     private LightPlayer(CommandSender sender) {

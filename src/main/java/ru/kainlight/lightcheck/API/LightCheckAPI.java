@@ -1,6 +1,5 @@
 package ru.kainlight.lightcheck.API;
 
-import com.google.common.collect.HashBiMap;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -12,8 +11,7 @@ import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 import ru.kainlight.lightcheck.Main;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class LightCheckAPI {
@@ -31,39 +29,45 @@ public final class LightCheckAPI {
      * 2 Player - Player
      */
     @Getter
-    private final HashBiMap<Player, Player> checkedPlayers = HashBiMap.create();
-    @Getter
-    private final Map<Player, Long> timer = new ConcurrentHashMap<>();
-    @Getter
-    private final Map<Player, Location> previousLocation = new HashMap<>();
+    private final Set<CheckedPlayer> checkedPlayers = new HashSet<>();
+
+    public void check(Player player, Player inspector) {
+        if (player == null || inspector == null) return;
+
+        var event = new LightCheckAPI.PlayerCheckEvent(player);
+        Main.getInstance().getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
+
+        CheckedPlayer checkedPlayer = new CheckedPlayer(player, inspector, player.getLocation());
+        LightCheckAPI.get().getCheckedPlayers().add(checkedPlayer);
+
+        player.setInvulnerable(true);
+        Main.getInstance().getRunnables().start(checkedPlayer);
+        checkedPlayer.teleportToInspector();
+    }
+
+    public boolean isChecking(CheckedPlayer checkedPlayer) {
+        return this.getCheckedPlayers().contains(checkedPlayer);
+    }
 
     public boolean isChecking(Player player) {
-        if(player == null) return false;
-        return getCheckedPlayers().containsValue(player);
+        return this.getCheckedPlayer(player).isPresent();
+    }
+    public boolean isCheckingByInspector(Player inspector) {
+        return this.getCheckedPlayerByInspector(inspector).isPresent();
     }
 
-    public CheckedPlayer getCheckedPlayer(Player player) {
-        if(!isChecking(player) && player == null) return null;
-
-        return new CheckedPlayer(player);
+    public Optional<CheckedPlayer> getCheckedPlayer(Player player) {
+        return this.getCheckedPlayers().stream().filter(f -> f.getPlayer().equals(player)).findAny();
     }
 
-    public CheckedPlayer getCheckedPlayerByInspector(Player inspector) {
-        Player player = getCheckedPlayers().get(inspector);
-        if(!isChecking(player) && player == null && inspector == null) return null;
-
-        return new CheckedPlayer(player);
+    public Optional<CheckedPlayer> getCheckedPlayerByInspector(Player inspector) {
+        return this.getCheckedPlayers().stream().filter(f -> f.getInspector().equals(inspector)).findAny();
     }
 
     public void stopAll() {
         Bukkit.getServer().getOnlinePlayers().forEach(online -> {
-            if(isChecking(online)) {
-                Main.getInstance().getRunnables().stopMessages(online);
-
-                getCheckedPlayers().remove(online);
-                getTimer().remove(online);
-                getPreviousLocation().remove(online);
-            }
+            this.getCheckedPlayer(online).ifPresent(CheckedPlayer::disprove);
         });
     }
 
@@ -86,8 +90,8 @@ public final class LightCheckAPI {
             this.player = player;
         }
 
-        public CheckedPlayer getCheckedPlayer() {
-            return new CheckedPlayer(player);
+        public Optional<CheckedPlayer> getCheckedPlayer() {
+            return LightCheckAPI.get().getCheckedPlayer(player);
         }
 
         @Override
@@ -111,8 +115,8 @@ public final class LightCheckAPI {
             this.player = player;
         }
 
-        public CheckedPlayer getCheckedPlayer() {
-            return new CheckedPlayer(player);
+        public Optional<CheckedPlayer> getCheckedPlayer() {
+            return LightCheckAPI.get().getCheckedPlayer(player);
         }
 
         @Override
@@ -136,8 +140,8 @@ public final class LightCheckAPI {
             this.player = player;
         }
 
-        public CheckedPlayer getCheckedPlayer() {
-            return new CheckedPlayer(player);
+        public Optional<CheckedPlayer> getCheckedPlayer() {
+            return LightCheckAPI.get().getCheckedPlayer(player);
         }
 
         @Override

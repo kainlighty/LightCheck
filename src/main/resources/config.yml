@@ -5,7 +5,7 @@
 # NONE - /confirm > approve yourself
 # lightcheck.rt - /check rt | removetimer > Remove timer
 # lightcheck.stop-all - /check stop-all > Stop all checks now
-# lightcheck.check.bypass > protection against a call for verification
+# lightcheck.bypass > protection against a call for verification
 
 config-version: 1.0
 # only when the server is turned on

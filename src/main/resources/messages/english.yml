@@ -1,4 +1,4 @@
-config-version: 1.0
+config-version: 1.1
 # To use spaces, use \n or |, if you want to remove the indentation, change any text.
 # Example disprove > player: "&a&l» &fYou were found not guilty, have a nice game!"
 
@@ -10,9 +10,9 @@ list:
 successfully:
   call: "&a&l» &fPlayer &e<username> &fhas been called for verification"
   timer:
-    add: "&a&l» &fYou added the timer time to the player <username> on <value> seconds"
-    stop: "&a&l» &fYou have removed the timer to the player <username>"
-  stop-all: "&a&l» &fВall verified players are released"
+    continue: "&a&l» &fYou have restored the timer to the player <username> &7(<value>)"
+    stop: "&a&l» &fYou have stopped the timer for the player <username>"
+  stop-all: "&a&l» &fAll checked players disproved"
   confirm: "&a&l» &fChecked &e<username> &fconfessed to using cheats"
   approve: "&a&l» &fPlayer &e<username> &ffound guilty of using cheats"
   disprove:
@@ -24,6 +24,7 @@ successfully:
 errors:
   already: "&c&l» &fThe player is already being checked"
   already-self: "&c&l» &fYou are already being checked"
+  call-self: "&c&l» &fYou can't call yourself in for a check"
   not-found: "&c&l» &fPlayer not found"
   no-timer: "&c&l» &fPlayer <username> does not have a timer"
   bypass: "&c&l» &fPlayer &e<username> &fprotected from checks"
@@ -44,7 +45,7 @@ chat:
     - '&f You are suspected of using cheats'
     - '&f   by inspector: &e<inspector>'
     - ''
-    - '&f  You have <minutes> minutes'
+    - '&f  You have <minutes> minutes' # or <seconds>
     - ''
     - '&f  Follow the steps below'
     - '&f  - Write your discord in the chat'

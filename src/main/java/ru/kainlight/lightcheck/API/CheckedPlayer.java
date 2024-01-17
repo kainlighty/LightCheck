@@ -1,39 +1,26 @@
 package ru.kainlight.lightcheck.API;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import ru.kainlight.lightcheck.COMMON.Others;
 import ru.kainlight.lightcheck.COMMON.lightlibrary.LightPlayer;
 import ru.kainlight.lightcheck.Main;
 
-import java.util.List;
-
 public final class CheckedPlayer {
-
-    private final Main plugin = Main.getInstance();
 
     @Getter
     private final Player player;
+    @Getter private final Player inspector;
+    @Getter @Setter private Long timer;
+    @Getter private final Location previousLocation;
 
-    CheckedPlayer(Player player) {
+    CheckedPlayer(Player player, Player inspector, Location previousLocation) {
         this.player = player;
-    }
-
-    public void call(Player inspector) {
-        if (player == null || inspector == null) return;
-
-        var event = new LightCheckAPI.PlayerCheckEvent(player);
-        plugin.getServer().getPluginManager().callEvent(event);
-        if (event.isCancelled()) return;
-		
-        player.setInvulnerable(true);
-
-        LightCheckAPI.get().getCheckedPlayers().put(inspector, player);
-        plugin.getRunnables().start(player);
-
-        LightCheckAPI.get().getPreviousLocation().put(player, player.getLocation());
-        teleportToInspector();
+        this.inspector = inspector;
+        this.previousLocation = previousLocation;
+        this.timer = Main.getInstance().getConfig().getLong("settings.timer");
     }
 
     public void approve() {
@@ -41,12 +28,12 @@ public final class CheckedPlayer {
         if (!LightCheckAPI.get().isChecking(player)) return;
 
         var event = new LightCheckAPI.PlayerApproveCheckEvent(player);
-        plugin.getServer().getPluginManager().callEvent(event);
+        Main.getInstance().getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) return;
 
         LightPlayer.of(player).clearTitle();
-        plugin.getRunnables().stopAll(player);
-        LightCheckAPI.get().getCheckedPlayers().inverse().remove(player);
+        Main.getInstance().getRunnables().stopAll(this);
+        LightCheckAPI.get().getCheckedPlayers().remove(this);
         player.setInvulnerable(false);
     }
 
@@ -55,22 +42,18 @@ public final class CheckedPlayer {
         if (!LightCheckAPI.get().isChecking(player)) return;
 
         var event = new LightCheckAPI.PlayerDisproveCheckEvent(player);
-        plugin.getServer().getPluginManager().callEvent(event);
+        Main.getInstance().getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) return;
 
-        plugin.getRunnables().stopAll(player);
-        LightCheckAPI.get().getCheckedPlayers().inverse().remove(player);
+        Main.getInstance().getRunnables().stopAll(this);
+        LightCheckAPI.get().getCheckedPlayers().remove(this);
         teleportBack();
 
         player.setInvulnerable(false);
     }
 
-    public Location getPreviousLocation() {
-        return LightCheckAPI.get().getPreviousLocation().get(player);
-    }
-
     public void teleportToInspector() {
-        boolean teleportToStaff = plugin.getConfig().getBoolean("abilities.teleport-to-staff");
+        boolean teleportToStaff = Main.getInstance().getConfig().getBoolean("abilities.teleport-to-staff");
         if (!teleportToStaff) return;
         if (player == null || getInspector() == null) return;
 
@@ -79,26 +62,16 @@ public final class CheckedPlayer {
     }
 
     public void teleportBack() {
-        boolean teleportToStaff = plugin.getConfig().getBoolean("abilities.teleport-to-staff");
-        boolean teleportBack = plugin.getConfig().getBoolean("abilities.teleport-back");
+        boolean teleportToStaff = Main.getInstance().getConfig().getBoolean("abilities.teleport-to-staff");
+        boolean teleportBack = Main.getInstance().getConfig().getBoolean("abilities.teleport-back");
         if (!teleportToStaff && !teleportBack) return;
         if(player == null) return;
 
         player.teleport(getPreviousLocation());
     }
 
-    public Long getTimer() {
-        return LightCheckAPI.get().getTimer().get(player);
-    }
-
-    public void setTimer(long count) {
-        LightCheckAPI.get().getTimer().put(player, count);
-    }
-
-    public void addTime(long count) {
-        if(hasTimer()) {
-            LightCheckAPI.get().getTimer().put(player, getTimer() + count);
-        }
+    public void startTimer() {
+        Main.getInstance().getRunnables().startTimerScheduler(this);
     }
 
     public boolean hasTimer() {
@@ -106,10 +79,6 @@ public final class CheckedPlayer {
     }
 
     public void stopTimer() {
-        if (hasTimer()) plugin.getRunnables().stopTimer(player);
-    }
-
-    public Player getInspector() {
-        return LightCheckAPI.get().getCheckedPlayers().inverse().get(player);
+        if (hasTimer()) Main.getInstance().getRunnables().stopTimer(this);
     }
 }

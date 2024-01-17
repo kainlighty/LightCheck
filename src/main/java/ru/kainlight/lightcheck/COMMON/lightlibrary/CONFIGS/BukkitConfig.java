@@ -18,7 +18,7 @@ import java.util.jar.JarFile;
 
 public final class BukkitConfig {
     private final LightPlugin plugin;
-    private final double CONFIG_VERSION = 1.0;
+    private final double CONFIG_VERSION = 1.1;
     private final String fileName;
     private final String subdirectory;
     private File configFile;

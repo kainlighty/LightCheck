@@ -9,19 +9,20 @@
 
     <groupId>ru.kainlight</groupId>
     <artifactId>LightCheck</artifactId>
-    <version>2.1.1</version>
+    <version>2.2.0</version>
     <packaging>jar</packaging>
 
     <licenses>
         <license>
             <name>MIT License</name>
-            <url>https://www.opensource.org/licenses/mit-license.php</url>
+            <url>https://github.com/kainlighty/LightCheck?tab=MIT-1-ov-file#</url>
         </license>
     </licenses>
 
     <developers>
         <developer>
             <id>kainlight</id>
+            <organization>kainlighty</organization>
             <name>Danil Panov</name>
             <url>vk.com/kainlight</url>
         </developer>

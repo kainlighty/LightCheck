@@ -2,7 +2,6 @@ package ru.kainlight.lightcheck.UTILS;
 
 import org.bukkit.entity.Player;
 import ru.kainlight.lightcheck.API.CheckedPlayer;
-import ru.kainlight.lightcheck.API.LightCheckAPI;
 import ru.kainlight.lightcheck.COMMON.lightlibrary.LightPlayer;
 import ru.kainlight.lightcheck.Main;
 
@@ -15,59 +14,53 @@ public final class Runnables {
 
     private final Main plugin;
 
-    public Map<Player, Integer> messageChatTimer = new HashMap<>();
-    public Map<Player, Integer> messageScreenTimer = new HashMap<>();
-    public Map<Player, Integer> clockTimerScheduler = new HashMap<>();
-    public Map<Player, Integer> bossbarScheduler = new HashMap<>();
+    public Map<CheckedPlayer, Integer> messageChatTimer = new HashMap<>();
+    public Map<CheckedPlayer, Integer> messageScreenTimer = new HashMap<>();
+    public Map<CheckedPlayer, Integer> clockTimerScheduler = new HashMap<>();
+    public Map<CheckedPlayer, Integer> bossbarScheduler = new HashMap<>();
 
     public Runnables(Main plugin) {
         this.plugin = plugin;
     }
 
-    public void start(Player player) {
-        if(player == null) return;
+    public void start(CheckedPlayer checkedPlayer) {
+        if(checkedPlayer == null) return;
 
-        long timer = plugin.getConfig().getLong("settings.timer");
-
-        startTimerScheduler(player, timer);
-        startChatMessageScheduler(player);
-        startScreenMessageScheduler(player);
-        startBossBarScheduler(player, timer);
+        startTimerScheduler(checkedPlayer);
+        startChatMessageScheduler(checkedPlayer);
+        startScreenMessageScheduler(checkedPlayer);
+        startBossBarScheduler(checkedPlayer);
     }
 
-    public void stopMessages(Player player) {
-        if (player == null) return;
+    public void stopMessages(CheckedPlayer checkedPlayer) {
+        if (checkedPlayer == null) return;
 
-        plugin.getServer().getScheduler().cancelTask(messageChatTimer.get(player));
-        plugin.getServer().getScheduler().cancelTask(messageScreenTimer.get(player));
-        messageChatTimer.remove(player);
-        messageScreenTimer.remove(player);
+        plugin.getServer().getScheduler().cancelTask(messageChatTimer.get(checkedPlayer));
+        plugin.getServer().getScheduler().cancelTask(messageScreenTimer.get(checkedPlayer));
+        messageChatTimer.remove(checkedPlayer);
+        messageScreenTimer.remove(checkedPlayer);
     }
 
-    public void stopTimer(Player player) {
-        if (player == null) return;
+    public void stopTimer(CheckedPlayer checkedPlayer) {
+        if (checkedPlayer == null) return;
 
-        Integer taskID = clockTimerScheduler.remove(player);
+        Integer taskID = clockTimerScheduler.remove(checkedPlayer);
         plugin.getServer().getScheduler().cancelTask(taskID);
-        LightCheckAPI.get().getTimer().remove(player);
     }
 
-    public void stopAll(Player player) {
-        stopMessages(player);
+    public void stopAll(CheckedPlayer checkedPlayer) {
+        stopMessages(checkedPlayer);
 
-        if(clockTimerScheduler.get(player) != null) {
-            stopTimer(player);
+        if(clockTimerScheduler.get(checkedPlayer) != null) {
+            stopTimer(checkedPlayer);
         }
     }
 
-    public void startTimerScheduler(Player player, long timer) {
-        CheckedPlayer checkedPlayer = LightCheckAPI.get().getCheckedPlayer(player);
-
-        checkedPlayer.setTimer(timer);
-
+    public void startTimerScheduler(CheckedPlayer checkedPlayer) {
+        if(checkedPlayer == null) return;
         if(checkedPlayer.getTimer() != null) {
-            clockTimerScheduler.put(player, plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, () -> {
-                if (player == null) return;
+            clockTimerScheduler.put(checkedPlayer, plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+                if(checkedPlayer.getPlayer() == null) return;
 
                 if (checkedPlayer.getInspector() == null) {
                     checkedPlayer.disprove();
@@ -93,32 +86,31 @@ public final class Runnables {
         }
     }
 
-    public void startChatMessageScheduler(Player player) {
+    public void startChatMessageScheduler(CheckedPlayer checkedPlayer) {
         long schedulerTimer = plugin.getConfig().getLong("settings.message-timer") * 20L;
-        messageChatTimer.put(player, plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, () -> {
-            if(player == null) return;
+        messageChatTimer.put(checkedPlayer, plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+            if(checkedPlayer.getPlayer() == null) return;
 
-            this.chatMessage(player);
+            this.chatMessage(checkedPlayer);
         }, 0L, schedulerTimer).getTaskId());
     }
 
-    public void startScreenMessageScheduler(Player player) {
-        messageScreenTimer.put(player, plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
-            if(player == null) return;
+    public void startScreenMessageScheduler(CheckedPlayer checkedPlayer) {
+        if(checkedPlayer == null) return;
+        messageScreenTimer.put(checkedPlayer, plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
+            if(checkedPlayer.getPlayer() == null) return;
 
-            this.screenMessages(player);
+            this.screenMessages(checkedPlayer);
         }, 0L, 20L).getTaskId());
     }
 
-    public void startBossBarScheduler(Player player, long timer) {
-        Bossbar bossBar = new Bossbar(plugin, player, timer);
-        bossbarScheduler.put(player, plugin.getServer().getScheduler().runTaskTimer(plugin, bossBar::show, 0L, 20L).getTaskId());
+    public void startBossBarScheduler(CheckedPlayer checkedPlayer) {
+        Bossbar bossBar = new Bossbar(plugin, checkedPlayer);
+        bossbarScheduler.put(checkedPlayer, plugin.getServer().getScheduler().runTaskTimer(plugin, bossBar::show, 0L, 20L).getTaskId());
     }
 
-    private void chatMessage(Player player) {
-        String hoverMessage = plugin.getMessageConfig().getConfig().getString("chat.hover");
-
-        CheckedPlayer checkedPlayer = LightCheckAPI.get().getCheckedPlayer(player);
+    private void chatMessage(CheckedPlayer checkedPlayer) {
+        Player player = checkedPlayer.getPlayer();
         Player inspector = checkedPlayer.getInspector();
 
         if(inspector == null || !inspector.isOnline()) {
@@ -126,6 +118,7 @@ public final class Runnables {
             return;
         }
 
+        String hoverMessage = plugin.getMessageConfig().getConfig().getString("chat.hover");
         if (checkedPlayer.hasTimer()) {
             Long timer = checkedPlayer.getTimer();
             Long secToMin = TimeUnit.SECONDS.toMinutes(timer);
@@ -134,7 +127,8 @@ public final class Runnables {
             with_timer.forEach(message -> {
                 message = message
                         .replace("<inspector>", inspector.getName())
-                        .replace("<minutes>", secToMin.toString());
+                        .replace("<minutes>", secToMin.toString())
+                        .replace("<seconds>", timer.toString());
 
                 LightPlayer.of(player).sendClickableHoverMessage(message, hoverMessage, "/check confirm");
             });
@@ -148,8 +142,8 @@ public final class Runnables {
         }
     }
 
-    private void screenMessages(Player player) {
-        CheckedPlayer checkedPlayer = LightCheckAPI.get().getCheckedPlayer(player);
+    private void screenMessages(CheckedPlayer checkedPlayer) {
+        Player player = checkedPlayer.getPlayer();
         Player inspector = checkedPlayer.getInspector();
 
         if(inspector == null || !inspector.isOnline()) {
@@ -157,20 +151,22 @@ public final class Runnables {
             return;
         }
 
-        boolean titleEnabled = plugin.getConfig().getBoolean("settings.title");
-        if (titleEnabled) {
-            String titleMessage = plugin.getMessageConfig().getConfig().getString("screen.check-title");
-            String subTitleMessage = plugin.getMessageConfig().getConfig().getString("screen.check-subtitle");
-            LightPlayer.of(player).sendTitle(titleMessage, subTitleMessage, 1, 15, 2);
+        Long timer = checkedPlayer.getTimer();
+        if(timer != null) {
+            boolean titleEnabled = plugin.getConfig().getBoolean("settings.title");
+            if (titleEnabled) {
+                String titleMessage = plugin.getMessageConfig().getConfig().getString("screen.check-title");
+                String subTitleMessage = plugin.getMessageConfig().getConfig().getString("screen.check-subtitle");
+                LightPlayer.of(player).sendTitle(titleMessage, subTitleMessage, 1, 15, 2);
+            }
+
+            boolean actionbarEnabled = plugin.getConfig().getBoolean("settings.actionbar");
+            if (actionbarEnabled) {
+                String message = plugin.getMessageConfig().getConfig().getString("screen.actionbar").replace("<seconds>", timer.toString());
+                LightPlayer.of(player).sendActionbar(message);
+            }
         }
 
-        boolean actionbarEnabled = plugin.getConfig().getBoolean("settings.actionbar");
-        Long timer = checkedPlayer.getTimer();
-        if (actionbarEnabled && timer != null) {
-            String message = plugin.getMessageConfig().getConfig().getString("screen.actionbar")
-                    .replace("<seconds>", timer.toString());
-            LightPlayer.of(player).sendActionbar( message);
-        }
     }
 
 }
