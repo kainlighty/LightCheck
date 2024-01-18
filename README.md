@@ -74,6 +74,7 @@
 
 - #### LightCheckAPI.getCheckedPlayers();
 - #### LightCheckAPI.getCheckedPlayer(); # Have main methods (approve(), disprove() and etc..)
+- #### LightCheckAPI.getCheckedPlayerByInspector(); # Have main methods (approve(), disprove() and etc..)
 - #### LightCheckAPI.isChecking();
 - #### LightCheckAPI.isCheckingByInspector();
 - #### LightCheckAPI.call(); # Start check logic
