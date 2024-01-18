@@ -3,7 +3,6 @@ package ru.kainlight.lightcheck.API;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -12,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import ru.kainlight.lightcheck.Main;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public final class LightCheckAPI {
 
@@ -31,7 +29,7 @@ public final class LightCheckAPI {
     @Getter
     private final Set<CheckedPlayer> checkedPlayers = new HashSet<>();
 
-    public void check(Player player, Player inspector) {
+    public void call(Player player, Player inspector) {
         if (player == null || inspector == null) return;
 
         var event = new LightCheckAPI.PlayerCheckEvent(player);

@@ -14,6 +14,7 @@ public final class CheckedPlayer {
     private final Player player;
     @Getter private final Player inspector;
     @Getter @Setter private Long timer;
+    private boolean hasTimer;
     @Getter private final Location previousLocation;
 
     CheckedPlayer(Player player, Player inspector, Location previousLocation) {
@@ -30,8 +31,8 @@ public final class CheckedPlayer {
         var event = new LightCheckAPI.PlayerApproveCheckEvent(player);
         Main.getInstance().getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) return;
-
         LightPlayer.of(player).clearTitle();
+
         Main.getInstance().getRunnables().stopAll(this);
         LightCheckAPI.get().getCheckedPlayers().remove(this);
         player.setInvulnerable(false);
@@ -45,10 +46,10 @@ public final class CheckedPlayer {
         Main.getInstance().getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) return;
 
+        LightPlayer.of(player).clearTitle();
+        teleportBack();
         Main.getInstance().getRunnables().stopAll(this);
         LightCheckAPI.get().getCheckedPlayers().remove(this);
-        teleportBack();
-
         player.setInvulnerable(false);
     }
 
@@ -71,14 +72,18 @@ public final class CheckedPlayer {
     }
 
     public void startTimer() {
+        this.hasTimer = true;
         Main.getInstance().getRunnables().startTimerScheduler(this);
     }
 
     public boolean hasTimer() {
-        return getTimer() != null && getTimer() > 0;
+        return hasTimer;
     }
 
     public void stopTimer() {
-        if (hasTimer()) Main.getInstance().getRunnables().stopTimer(this);
+        if (hasTimer()) {
+            hasTimer = false;
+            Main.getInstance().getRunnables().stopTimer(this);
+        }
     }
 }

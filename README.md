@@ -58,7 +58,7 @@
 <dependency>
     <groupId>com.github.kainlighty</groupId>
     <artifactId>LightCheck</artifactId>
-    <version>2.1.1</version>
+    <version>2.2.0</version>
     <scope>provided</scope>
 </dependency>
 ```
@@ -72,17 +72,13 @@
 ## - Methods
 
 - #### LightCheckAPI.getCheckedPlayers();
-- #### LightCheckAPI.getCheckedPlayer();
-- #### LightCheckAPI.call();
+- #### LightCheckAPI.getCheckedPlayer(); # Have main methods (approve(), disprove() and etc..)
+- #### LightCheckAPI.isChecking();
+- #### LightCheckAPI.isCheckingByInspector();
+- #### LightCheckAPI.call(); # Start check logic
 - #### LightCheckAPI.approve();
 - #### LightCheckAPI.disprove();
-- #### LightCheckAPI.teleportToInspector();
-- #### LightCheckAPI.teleportBack(); // *TO PREVIOUS LOCATION*
-- #### LightCheckAPI.getTimer();
-- #### LightCheckAPI.hasTimer();
-- #### LightCheckAPI.setTimer();
-- #### LightCheckAPI.removeTimer();
-- #### LightCheckAPI.getInspector();
+- #### LightCheckAPI.stopAll();
 
 
 ### LICENSE:

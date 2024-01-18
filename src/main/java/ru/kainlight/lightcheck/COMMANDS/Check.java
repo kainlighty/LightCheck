@@ -130,7 +130,7 @@ public class Check implements CommandExecutor {
                 if (checkedPlayer.isEmpty()) return true;
                 CheckedPlayer checked = checkedPlayer.get();
 
-                if (args[1].equalsIgnoreCase("continue") && sender.hasPermission("lightcheck.timer.continue")) {
+                if (args[1].equalsIgnoreCase("continue") && sender.hasPermission("lightcheck.timer.continue") && !checked.hasTimer()) {
                     String message = plugin.getMessageConfig().getConfig().getString("successfully.timer.continue")
                             .replace("<username>", checked.getPlayer().getName())
                             .replace("<value>", checked.getTimer().toString());
@@ -193,7 +193,7 @@ public class Check implements CommandExecutor {
                         return true;
                     }
 
-                    LightCheckAPI.get().check(player, sender);
+                    LightCheckAPI.get().call(player, sender);
                     String call = plugin.getMessageConfig().getConfig().getString("successfully.call").replace("<username>", username);
                     lightSender.sendMessage(call);
                 }

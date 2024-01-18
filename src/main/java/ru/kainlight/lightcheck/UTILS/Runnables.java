@@ -26,7 +26,7 @@ public final class Runnables {
     public void start(CheckedPlayer checkedPlayer) {
         if(checkedPlayer == null) return;
 
-        startTimerScheduler(checkedPlayer);
+        checkedPlayer.startTimer();
         startChatMessageScheduler(checkedPlayer);
         startScreenMessageScheduler(checkedPlayer);
         startBossBarScheduler(checkedPlayer);
@@ -52,12 +52,13 @@ public final class Runnables {
         stopMessages(checkedPlayer);
 
         if(clockTimerScheduler.get(checkedPlayer) != null) {
-            stopTimer(checkedPlayer);
+            checkedPlayer.stopTimer();
         }
     }
 
     public void startTimerScheduler(CheckedPlayer checkedPlayer) {
         if(checkedPlayer == null) return;
+
         if(checkedPlayer.getTimer() != null) {
             clockTimerScheduler.put(checkedPlayer, plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, () -> {
                 if(checkedPlayer.getPlayer() == null) return;
@@ -87,6 +88,8 @@ public final class Runnables {
     }
 
     public void startChatMessageScheduler(CheckedPlayer checkedPlayer) {
+        if(checkedPlayer == null) return;
+
         long schedulerTimer = plugin.getConfig().getLong("settings.message-timer") * 20L;
         messageChatTimer.put(checkedPlayer, plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, () -> {
             if(checkedPlayer.getPlayer() == null) return;
@@ -97,6 +100,7 @@ public final class Runnables {
 
     public void startScreenMessageScheduler(CheckedPlayer checkedPlayer) {
         if(checkedPlayer == null) return;
+
         messageScreenTimer.put(checkedPlayer, plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
             if(checkedPlayer.getPlayer() == null) return;
 
@@ -105,6 +109,8 @@ public final class Runnables {
     }
 
     public void startBossBarScheduler(CheckedPlayer checkedPlayer) {
+        if(checkedPlayer == null) return;
+
         Bossbar bossBar = new Bossbar(plugin, checkedPlayer);
         bossbarScheduler.put(checkedPlayer, plugin.getServer().getScheduler().runTaskTimer(plugin, bossBar::show, 0L, 20L).getTaskId());
     }
