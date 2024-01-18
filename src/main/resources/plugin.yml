@@ -3,9 +3,13 @@ main: ru.kainlight.lightcheck.Main
 version: '${project.version}'
 api-version: '1.17'
 
-authors: [ kainlight ]
+author: kainlight
 description: '${pom.description}'
-website: vk.com/kainlight
+website: '${pom.organization.url}'
+
+libraries:
+  - net.kyori:adventure-platform-bukkit:4.3.0
+  - net.kyori:adventure-api:4.14.0
 
 softdepend:
   - PlaceholderAPI
@@ -14,7 +18,7 @@ commands:
   lightcheck:
     aliases:
       - check
-    description: Вызвать игрока на проверку
+    description: To call the player to check the cheats
 
 permissions:
   lightcheck.list:
@@ -29,7 +33,7 @@ permissions:
     default: not op
   lightcheck.disprove:
     default: op
-  lightcheck.timer.add:
+  lightcheck.timer.continue:
     default: op
   lightcheck.timer.stop:
     default: op

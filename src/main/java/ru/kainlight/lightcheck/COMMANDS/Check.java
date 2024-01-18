@@ -11,10 +11,7 @@ import ru.kainlight.lightcheck.API.LightCheckAPI;
 import ru.kainlight.lightcheck.COMMON.lightlibrary.LightPlayer;
 import ru.kainlight.lightcheck.Main;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class Check implements CommandExecutor {
 
@@ -47,12 +44,13 @@ public class Check implements CommandExecutor {
 
         if (!(commandSender instanceof Player sender)) return true;
         LightPlayer lightSender = LightPlayer.of(sender);
+
         String subCommand = args[0].toLowerCase();
         switch (subCommand) {
             case "list" -> {
                 if (!sender.hasPermission("lightcheck.list")) return true;
 
-                var checkedPlayers = LightCheckAPI.get().getCheckedPlayers();
+                Set<CheckedPlayer> checkedPlayers = LightCheckAPI.get().getCheckedPlayers();
                 Integer checkedPlayersCount = checkedPlayers.size();
 
                 final String header = plugin.getMessageConfig().getConfig().getString("list.header");
