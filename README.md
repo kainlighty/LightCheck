@@ -30,6 +30,7 @@
 ![7d23b3c23ecc6bcfa777fd16dcd2ee46077f8640](https://github.com/kainlighty/LightCheck/assets/111251772/cce24929-3756-4af9-81e4-bfe02065bc60)
 ![7d775ed462693e815bc4655e8a43e555a2df591f](https://github.com/kainlighty/LightCheck/assets/111251772/09fb152a-2c6c-4039-9825-7b6052e40863)
 
+## › Commands and Permissions
 | Command              | Description                            | Permission                |
 |----------------------|----------------------------------------|---------------------------|
 | check                | Help by commands                       | lightcheck.check          |
