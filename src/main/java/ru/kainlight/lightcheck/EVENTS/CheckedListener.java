@@ -121,15 +121,6 @@ public class CheckedListener implements Listener {
     }
 
     @EventHandler
-    public void onPickupArrowChecked(PlayerPickupArrowEvent event) {
-        Player player = event.getPlayer();
-
-        if (isCheckingAndAbilityEnabled(player, "block-pickup")) {
-            event.setCancelled(true);
-        }
-    }
-
-    @EventHandler
     public void onDamageChecked(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player player) {
             if (isCheckingAndAbilityEnabled(player, "block-damage")) {

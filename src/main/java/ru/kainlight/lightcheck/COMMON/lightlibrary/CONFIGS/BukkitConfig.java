@@ -1,5 +1,6 @@
 package ru.kainlight.lightcheck.COMMON.lightlibrary.CONFIGS;
 
+import lombok.Setter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import ru.kainlight.lightcheck.COMMON.lightlibrary.LightPlugin;
@@ -18,7 +19,7 @@ import java.util.jar.JarFile;
 
 public final class BukkitConfig {
     private final LightPlugin plugin;
-    private final double CONFIG_VERSION = 1.1;
+    private double CONFIG_VERSION = 1.1;
     private final String fileName;
     private final String subdirectory;
     private File configFile;
@@ -162,6 +163,10 @@ public final class BukkitConfig {
         plugin.getLogger().warning(fileName + " updated");
         getConfig().set("config-version", CONFIG_VERSION);
         saveConfig();
+    }
+
+    public void setConfigVersion(double ver) {
+        this.CONFIG_VERSION = ver;
     }
 
 }
