@@ -133,7 +133,8 @@ public final class BukkitConfig {
     public void updateConfig() {
         // Загрузка текущей конфигурации
         FileConfiguration userConfig = this.getConfig();
-        double version = userConfig.getDouble("config-version");
+        Double version = userConfig.getDouble("config-version");
+        if(version == null) return;
         if(version == CONFIG_VERSION) return;
 
         InputStream defaultConfigStream;
@@ -163,6 +164,13 @@ public final class BukkitConfig {
         plugin.getLogger().warning(fileName + " updated");
         getConfig().set("config-version", CONFIG_VERSION);
         saveConfig();
+
+        try {
+            defaultConfigStream.close();
+            inputConfigReader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setConfigVersion(double ver) {

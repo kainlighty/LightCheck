@@ -12,6 +12,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
 import ru.kainlight.lightcheck.COMMON.lightlibrary.CONFIGS.BukkitConfig;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -70,6 +71,13 @@ public class LightPlugin extends JavaPlugin {
         getLogger().warning("config.yml updated");
         getConfig().set("config-version", CONFIG_VERSION);
         saveConfig();
+
+        try {
+            defaultConfigStream.close();
+            inputConfigReader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static boolean isPaper() {
