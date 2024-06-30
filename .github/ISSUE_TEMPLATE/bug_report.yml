@@ -1,6 +1,6 @@
 name: ⚠️ Bug
 description: Create a bug report
-labels: ["bug"]
+labels: [ "bug" ]
 body:
   - type: dropdown
     id: plugin-version
@@ -35,3 +35,9 @@ body:
       description: Be sure to insert StackTrace errors. If there isn't one, describe the problem in as much detail as possible.
     validations:
       required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Stacktrace
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      render: shell
