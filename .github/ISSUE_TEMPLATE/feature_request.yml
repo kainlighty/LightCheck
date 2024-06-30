@@ -7,11 +7,11 @@ body:
     attributes:
       label: Select The Core
       options:
-        - Spigot
         - Paper
         - Purpur
         - Airplane
         - Pufferfish
+        - Spigot
     validations:
       required: true
   - type: textarea
