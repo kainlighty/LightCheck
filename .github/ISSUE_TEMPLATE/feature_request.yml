@@ -3,19 +3,6 @@ description: Create a feature request
 labels: ["feature"]
 body:
   - type: dropdown
-    id: plugin-version
-    attributes:
-      label: Plugin Version
-      options:
-        - 2.2.2
-        - 2.2.1
-        - 2.2.0
-        - 2.1.1
-        - 2.1.0
-      description: Versions below 2.1.0 are not supported
-    validations:
-      required: true
-  - type: dropdown
     id: core-select
     attributes:
       label: Select The Core
@@ -30,6 +17,6 @@ body:
   - type: textarea
     id: description
     attributes:
-      label: Your requeset
+      label: Description
     validations:
       required: true
