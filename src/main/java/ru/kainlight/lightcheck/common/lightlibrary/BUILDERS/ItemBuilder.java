@@ -1,4 +1,4 @@
-package ru.kainlight.lightcheck.BUILDERS;
+package ru.kainlight.lightcheck.common.lightlibrary.BUILDERS;
 
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
-import ru.kainlight.lightcheck.COMMON.lightlibrary.UTILS.Parser;
+import ru.kainlight.lightcheck.common.lightlibrary.UTILS.Parser;
 
 import javax.annotation.Nonnegative;
 import java.util.*;

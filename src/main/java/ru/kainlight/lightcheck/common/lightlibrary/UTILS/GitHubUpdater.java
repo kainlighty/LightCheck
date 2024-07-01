@@ -1,10 +1,10 @@
-package ru.kainlight.lightcheck.COMMON.lightlibrary.UTILS;
+package ru.kainlight.lightcheck.common.lightlibrary.UTILS;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import ru.kainlight.lightcheck.COMMON.lightlibrary.LightLib;
+import ru.kainlight.lightcheck.common.lightlibrary.LightLib;
 import ru.kainlight.lightcheck.Main;
 
 import java.io.BufferedReader;

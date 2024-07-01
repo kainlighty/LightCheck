@@ -59,7 +59,7 @@
 <dependency>
     <groupId>com.github.kainlighty</groupId>
     <artifactId>LightCheck</artifactId>
-    <version>2.2.0</version>
+    <version>2.2.2</version>
     <scope>provided</scope>
 </dependency>
 ```

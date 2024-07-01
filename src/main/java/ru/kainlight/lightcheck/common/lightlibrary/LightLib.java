@@ -1,8 +1,8 @@
-package ru.kainlight.lightcheck.COMMON.lightlibrary;
+package ru.kainlight.lightcheck.common.lightlibrary;
 
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
-import ru.kainlight.lightcheck.COMMON.lightlibrary.UTILS.Parser;
+import ru.kainlight.lightcheck.common.lightlibrary.UTILS.Parser;
 
 public final class LightLib {
     private LightLib() {}

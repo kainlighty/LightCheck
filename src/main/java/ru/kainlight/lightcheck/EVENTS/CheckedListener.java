@@ -9,7 +9,7 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.*;
 import ru.kainlight.lightcheck.API.CheckedPlayer;
 import ru.kainlight.lightcheck.API.LightCheckAPI;
-import ru.kainlight.lightcheck.COMMON.lightlibrary.LightPlayer;
+import ru.kainlight.lightcheck.common.lightlibrary.LightPlayer;
 import ru.kainlight.lightcheck.Main;
 
 import java.util.List;
@@ -24,18 +24,28 @@ public class CheckedListener implements Listener {
     }
 
     @EventHandler
+    public void onJoinChecked(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        String inspectorName = plugin.getRunnables().offlineChecks.get(player);
+
+        if(inspectorName != null) {
+            Player inspector = plugin.getServer().getPlayer(inspectorName);
+
+            if(inspector != null) LightCheckAPI.get().call(player, inspector);
+            plugin.getRunnables().offlineChecks.remove(player);
+        }
+
+    }
+
+    @EventHandler
     public void onQuitChecked(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         Optional<CheckedPlayer> checkedPlayer = LightCheckAPI.get().getCheckedPlayer(player);
 
-        if(checkedPlayer.isPresent()) {
-            checkedPlayer.get().approve();
-            List<String> quitCommands = plugin.getConfig().getStringList("commands.quit");
-
-            if (!quitCommands.isEmpty()) {
-                quitCommands.forEach(command -> plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command.replace("<player>", player.getName())));
-            }
-        }
+        checkedPlayer.ifPresent(checked -> {
+            checked.approve();
+            plugin.getRunnables().sendPunishmentCommand(checked.getPlayer(), "quit");
+        });
 
     }
 
@@ -46,19 +56,12 @@ public class CheckedListener implements Listener {
 
         if (checkedPlayer.isPresent()) {
             CheckedPlayer checked = checkedPlayer.get();
-
             checked.approve();
-            List<String> kickCommands = plugin.getConfig().getStringList("commands.kick");
-            boolean abilityEnabled = !kickCommands.isEmpty();
 
-            if (abilityEnabled) {
-                var timer = checked.getTimer();
-
-                if (timer != null && timer >= 0) {
-                    kickCommands.forEach(command -> plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), command.replace("<player>", player.getName())));
-                }
+            var timer = checked.getTimer();
+            if (timer != null && timer >= 0) {
+                plugin.getRunnables().sendPunishmentCommand(checked.getPlayer(), "kick");
             }
-
         }
     }
 

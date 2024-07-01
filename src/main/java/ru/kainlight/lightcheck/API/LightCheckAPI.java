@@ -1,13 +1,9 @@
 package ru.kainlight.lightcheck.API;
 
 import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.player.PlayerEvent;
-import org.jetbrains.annotations.NotNull;
+import ru.kainlight.lightcheck.API.events.PlayerCheckEvent;
 import ru.kainlight.lightcheck.Main;
 
 import java.util.*;
@@ -32,15 +28,15 @@ public final class LightCheckAPI {
     public void call(Player player, Player inspector) {
         if (player == null || inspector == null) return;
 
-        var event = new LightCheckAPI.PlayerCheckEvent(player);
-        Main.getInstance().getServer().getPluginManager().callEvent(event);
-        if (event.isCancelled()) return;
-
         CheckedPlayer checkedPlayer = new CheckedPlayer(player, inspector, player.getLocation());
         LightCheckAPI.get().getCheckedPlayers().add(checkedPlayer);
 
+        var event = new PlayerCheckEvent(player);
+        Main.getINSTANCE().getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
+
         player.setInvulnerable(true);
-        Main.getInstance().getRunnables().start(checkedPlayer);
+        Main.getINSTANCE().getRunnables().start(checkedPlayer);
         checkedPlayer.teleportToInspector();
     }
 
@@ -64,88 +60,6 @@ public final class LightCheckAPI {
     }
 
     public void stopAll() {
-        Bukkit.getServer().getOnlinePlayers().forEach(online -> {
-            this.getCheckedPlayer(online).ifPresent(CheckedPlayer::disprove);
-        });
+        Bukkit.getServer().getOnlinePlayers().forEach(online -> this.getCheckedPlayer(online).ifPresent(CheckedPlayer::disprove));
     }
-
-
-
-
-    // * -- EVENTS -- * \\
-    public static class PlayerCheckEvent extends PlayerEvent implements Cancellable {
-
-        @Getter
-        private static final HandlerList handlerList = new HandlerList();
-
-        private final Player player;
-
-        @Getter @Setter
-        private boolean isCancelled = false;
-
-        public PlayerCheckEvent(@NotNull Player player) {
-            super(player);
-            this.player = player;
-        }
-
-        public Optional<CheckedPlayer> getCheckedPlayer() {
-            return LightCheckAPI.get().getCheckedPlayer(player);
-        }
-
-        @Override
-        public @NotNull HandlerList getHandlers() {
-            return handlerList;
-        }
-    }
-
-    public static class PlayerApproveCheckEvent extends PlayerEvent implements Cancellable {
-
-        @Getter
-        private static final HandlerList handlerList = new HandlerList();
-
-        private final Player player;
-
-        @Getter @Setter
-        private boolean isCancelled = false;
-
-        public PlayerApproveCheckEvent(@NotNull Player player) {
-            super(player);
-            this.player = player;
-        }
-
-        public Optional<CheckedPlayer> getCheckedPlayer() {
-            return LightCheckAPI.get().getCheckedPlayer(player);
-        }
-
-        @Override
-        public @NotNull HandlerList getHandlers() {
-            return handlerList;
-        }
-    }
-
-    public static class PlayerDisproveCheckEvent extends PlayerEvent implements Cancellable {
-
-        @Getter
-        private static final HandlerList handlerList = new HandlerList();
-
-        private final Player player;
-
-        @Getter @Setter
-        private boolean isCancelled = false;
-
-        public PlayerDisproveCheckEvent(@NotNull Player player) {
-            super(player);
-            this.player = player;
-        }
-
-        public Optional<CheckedPlayer> getCheckedPlayer() {
-            return LightCheckAPI.get().getCheckedPlayer(player);
-        }
-
-        @Override
-        public @NotNull HandlerList getHandlers() {
-            return handlerList;
-        }
-    }
-
 }

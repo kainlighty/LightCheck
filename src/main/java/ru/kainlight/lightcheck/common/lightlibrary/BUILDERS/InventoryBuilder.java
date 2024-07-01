@@ -1,4 +1,4 @@
-package ru.kainlight.lightcheck.BUILDERS;
+package ru.kainlight.lightcheck.common.lightlibrary.BUILDERS;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;

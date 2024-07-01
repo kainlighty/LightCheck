@@ -1,7 +1,7 @@
-package ru.kainlight.lightcheck.COMMON.lightlibrary.UTILS;
+package ru.kainlight.lightcheck.common.lightlibrary.UTILS;
 
 import org.bukkit.plugin.Plugin;
-import ru.kainlight.lightcheck.COMMON.lightlibrary.LightLib;
+import ru.kainlight.lightcheck.common.lightlibrary.LightLib;
 import ru.kainlight.lightcheck.Main;
 
 @SuppressWarnings("deprecation")
@@ -12,7 +12,7 @@ public final class Initiators {
                 .logger("")
                 .logger("&c » &7" + plugin.getDescription().getName() + " enabled")
                 .logger("&c » &7Version: " + plugin.getDescription().getVersion());
-        new GitHubUpdater(Main.getInstance()).start();
+        new GitHubUpdater(Main.getINSTANCE()).start();
         LightLib.get().logger("");
     }
 }

@@ -1,4 +1,4 @@
-package ru.kainlight.lightcheck.COMMON.lightlibrary.UTILS;
+package ru.kainlight.lightcheck.common.lightlibrary.UTILS;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -7,7 +7,6 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,6 +46,11 @@ public final class Parser {
         return hex(serializedMessage);
     }
 
+    public List<Component> hex(List<String> messages) {
+        if(messages.isEmpty()) return List.of();
+        return messages.stream().map(this::hex).toList();
+    }
+
     public String hexString(String message) {
         if(message == null) return "";
 
@@ -62,14 +66,17 @@ public final class Parser {
     }
 
     public List<String> hexString(List<String> messages) {
-        if(messages.isEmpty()) return List.of("");
-        List<String> copyMessages = new ArrayList<>();
+        if(messages.isEmpty()) return List.of();
+
+        return messages.stream().map(this::hexString).toList();
+
+        /*List<String> copyMessages = new ArrayList<>();
         messages.forEach(message -> {
             String s = hexString(message);
             copyMessages.add(s);
         });
 
-        return copyMessages;
+        return copyMessages;*/
     }
 
     public String replacedString(@NotNull Component text, String replaceOn, String replaceable) {

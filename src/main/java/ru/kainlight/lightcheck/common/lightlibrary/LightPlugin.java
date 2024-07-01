@@ -1,4 +1,4 @@
-package ru.kainlight.lightcheck.COMMON.lightlibrary;
+package ru.kainlight.lightcheck.common.lightlibrary;
 
 import lombok.Getter;
 import org.bukkit.command.CommandExecutor;
@@ -10,7 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
-import ru.kainlight.lightcheck.COMMON.lightlibrary.CONFIGS.BukkitConfig;
+import ru.kainlight.lightcheck.common.lightlibrary.CONFIGS.BukkitConfig;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,7 +20,7 @@ import java.nio.charset.StandardCharsets;
 @Getter
 public class LightPlugin extends JavaPlugin {
 
-    private final double CONFIG_VERSION = 1.0;
+    private final double CONFIG_VERSION = 1.2;
     public static final boolean paper = isPaper();
     public BukkitConfig messageConfig;
 	

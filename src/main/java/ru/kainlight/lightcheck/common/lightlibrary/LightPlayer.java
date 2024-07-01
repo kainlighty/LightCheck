@@ -1,6 +1,5 @@
-package ru.kainlight.lightcheck.COMMON.lightlibrary;
+package ru.kainlight.lightcheck.common.lightlibrary;
 
-import lombok.Getter;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -11,19 +10,18 @@ import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import ru.kainlight.lightcheck.COMMON.lightlibrary.UTILS.Parser;
+import ru.kainlight.lightcheck.common.lightlibrary.UTILS.Parser;
 import ru.kainlight.lightcheck.Main;
 
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 
-@SuppressWarnings("unused")
+@SuppressWarnings("all")
 public final class LightPlayer {
 
-    @Getter
-    private static final BukkitAudiences audience = BukkitAudiences.create(Main.getInstance());
-    @Getter
+    //@Getter
+    private static final BukkitAudiences audience = BukkitAudiences.create(Main.getINSTANCE());
     private final Audience sender;
 
     private LightPlayer(CommandSender sender) {
@@ -122,6 +120,7 @@ public final class LightPlayer {
         if (message == null) return;
         Component component = Parser.get().hex(message);
 
+        // Bukkit.getServer().getOnlinePlayers().forEach(online -> audience.player(online).sendMessage(component));
         Bukkit.getServer().getOnlinePlayers().forEach(online -> audience.player(online).sendMessage(component));
     }
 

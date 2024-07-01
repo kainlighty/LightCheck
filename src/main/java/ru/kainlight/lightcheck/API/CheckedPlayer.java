@@ -4,8 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import ru.kainlight.lightcheck.COMMON.Others;
-import ru.kainlight.lightcheck.COMMON.lightlibrary.LightPlayer;
+import ru.kainlight.lightcheck.API.events.PlayerApproveCheckEvent;
+import ru.kainlight.lightcheck.API.events.PlayerDisproveCheckEvent;
+import ru.kainlight.lightcheck.common.Others;
+import ru.kainlight.lightcheck.common.lightlibrary.LightPlayer;
 import ru.kainlight.lightcheck.Main;
 
 public final class CheckedPlayer {
@@ -21,19 +23,19 @@ public final class CheckedPlayer {
         this.player = player;
         this.inspector = inspector;
         this.previousLocation = previousLocation;
-        this.timer = Main.getInstance().getConfig().getLong("settings.timer");
+        this.timer = Main.getINSTANCE().getConfig().getLong("settings.timer");
     }
 
     public void approve() {
         if(player == null) return;
         if (!LightCheckAPI.get().isChecking(player)) return;
 
-        var event = new LightCheckAPI.PlayerApproveCheckEvent(player);
-        Main.getInstance().getServer().getPluginManager().callEvent(event);
+        var event = new PlayerApproveCheckEvent(player);
+        Main.getINSTANCE().getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) return;
-        LightPlayer.of(player).clearTitle();
 
-        Main.getInstance().getRunnables().stopAll(this);
+        LightPlayer.of(player).clearTitle();
+        Main.getINSTANCE().getRunnables().stopAll(this);
         LightCheckAPI.get().getCheckedPlayers().remove(this);
         player.setInvulnerable(false);
     }
@@ -42,19 +44,19 @@ public final class CheckedPlayer {
         if(player == null) return;
         if (!LightCheckAPI.get().isChecking(player)) return;
 
-        var event = new LightCheckAPI.PlayerDisproveCheckEvent(player);
-        Main.getInstance().getServer().getPluginManager().callEvent(event);
+        var event = new PlayerDisproveCheckEvent(player);
+        Main.getINSTANCE().getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) return;
 
         LightPlayer.of(player).clearTitle();
         teleportBack();
-        Main.getInstance().getRunnables().stopAll(this);
+        Main.getINSTANCE().getRunnables().stopAll(this);
         LightCheckAPI.get().getCheckedPlayers().remove(this);
         player.setInvulnerable(false);
     }
 
     public void teleportToInspector() {
-        boolean teleportToStaff = Main.getInstance().getConfig().getBoolean("abilities.teleport-to-staff");
+        boolean teleportToStaff = Main.getINSTANCE().getConfig().getBoolean("abilities.teleport-to-staff");
         if (!teleportToStaff) return;
         if (player == null || getInspector() == null) return;
 
@@ -63,27 +65,32 @@ public final class CheckedPlayer {
     }
 
     public void teleportBack() {
-        boolean teleportToStaff = Main.getInstance().getConfig().getBoolean("abilities.teleport-to-staff");
-        boolean teleportBack = Main.getInstance().getConfig().getBoolean("abilities.teleport-back");
+        boolean teleportToStaff = Main.getINSTANCE().getConfig().getBoolean("abilities.teleport-to-staff");
+        boolean teleportBack = Main.getINSTANCE().getConfig().getBoolean("abilities.teleport-back");
         if (!teleportToStaff && !teleportBack) return;
         if(player == null) return;
 
         player.teleport(getPreviousLocation());
     }
 
-    public void startTimer() {
-        this.hasTimer = true;
-        Main.getInstance().getRunnables().startTimerScheduler(this);
+    public boolean startTimer() {
+        if(!hasTimer()) {
+            this.hasTimer = true;
+            Main.getINSTANCE().getRunnables().startTimerScheduler(this);
+            return true;
+        } else return false;
     }
 
     public boolean hasTimer() {
         return hasTimer;
     }
 
-    public void stopTimer() {
+    public boolean stopTimer() {
         if (hasTimer()) {
             hasTimer = false;
-            Main.getInstance().getRunnables().stopTimer(this);
-        }
+            Main.getINSTANCE().getRunnables().stopTimer(this);
+            return true;
+        } else return false;
     }
+
 }

@@ -1,4 +1,4 @@
-config-version: 1.1
+config-version: 1.2
 # Для использования пробелов используется \n или |, если вы хотите убрать отступы, измените любой текст.
 # К примеру: disprove > player: "&a&l» &fВы были признаны невиновным!, приятной игры!"
 
@@ -9,6 +9,7 @@ list:
 
 successfully:
   call: "&a&l» &fВызван игрок &e<username> &fна проверку"
+  offline-call: "&a&l» &fВызван игрок &e<username> &fна проверку в оффлайне"
   timer:
     continue: "&a&l» &fВы восстановили таймер игроку <username> &7(<value>)"
     stop: "&a&l» &fВы остановили таймер игроку <username>"

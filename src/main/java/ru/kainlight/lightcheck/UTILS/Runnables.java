@@ -1,18 +1,21 @@
 package ru.kainlight.lightcheck.UTILS;
 
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import ru.kainlight.lightcheck.API.CheckedPlayer;
-import ru.kainlight.lightcheck.COMMON.lightlibrary.LightPlayer;
+import ru.kainlight.lightcheck.common.lightlibrary.CONFIGS.BukkitConfig;
+import ru.kainlight.lightcheck.common.lightlibrary.LightPlayer;
 import ru.kainlight.lightcheck.Main;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public final class Runnables {
 
     private final Main plugin;
+
+    public Map<OfflinePlayer, String> offlineChecks = new HashMap<>();
 
     public Map<CheckedPlayer, Integer> messageChatTimer = new HashMap<>();
     public Map<CheckedPlayer, Integer> messageScreenTimer = new HashMap<>();
@@ -24,7 +27,7 @@ public final class Runnables {
     }
 
     public void start(CheckedPlayer checkedPlayer) {
-        if(checkedPlayer == null) return;
+        if (checkedPlayer == null) return;
 
         checkedPlayer.startTimer();
         startChatMessageScheduler(checkedPlayer);
@@ -51,17 +54,18 @@ public final class Runnables {
     public void stopAll(CheckedPlayer checkedPlayer) {
         stopMessages(checkedPlayer);
 
-        if(clockTimerScheduler.get(checkedPlayer) != null) {
+        if (clockTimerScheduler.get(checkedPlayer) != null) {
             checkedPlayer.stopTimer();
         }
     }
 
+    // TODO: Add an alert for the inspector about the imminent end of the timer or common bossbar
     public void startTimerScheduler(CheckedPlayer checkedPlayer) {
-        if(checkedPlayer == null) return;
+        if (checkedPlayer == null) return;
 
-        if(checkedPlayer.getTimer() != null) {
+        if (checkedPlayer.getTimer() != null) {
             clockTimerScheduler.put(checkedPlayer, plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, () -> {
-                if(checkedPlayer.getPlayer() == null) return;
+                if (checkedPlayer.getPlayer() == null) return;
 
                 if (checkedPlayer.getInspector() == null) {
                     checkedPlayer.disprove();
@@ -75,7 +79,7 @@ public final class Runnables {
                     plugin.getServer().getScheduler().runTask(plugin, () -> {
                         checkedPlayer.approve();
                         List<String> getApproveCommands = plugin.getConfig().getStringList("commands.approve");
-                        if(!getApproveCommands.isEmpty()) {
+                        if (!getApproveCommands.isEmpty()) {
                             getApproveCommands.forEach(commands -> plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), commands.replace("<player>", checkedPlayer.getPlayer().getName())));
                         }
                     });
@@ -88,28 +92,28 @@ public final class Runnables {
     }
 
     public void startChatMessageScheduler(CheckedPlayer checkedPlayer) {
-        if(checkedPlayer == null) return;
+        if (checkedPlayer == null) return;
 
         long schedulerTimer = plugin.getConfig().getLong("settings.message-timer") * 20L;
         messageChatTimer.put(checkedPlayer, plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, () -> {
-            if(checkedPlayer.getPlayer() == null) return;
+            if (checkedPlayer.getPlayer() == null) return;
 
             this.chatMessage(checkedPlayer);
         }, 0L, schedulerTimer).getTaskId());
     }
 
     public void startScreenMessageScheduler(CheckedPlayer checkedPlayer) {
-        if(checkedPlayer == null) return;
+        if (checkedPlayer == null) return;
 
         messageScreenTimer.put(checkedPlayer, plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
-            if(checkedPlayer.getPlayer() == null) return;
+            if (checkedPlayer.getPlayer() == null) return;
 
             this.screenMessages(checkedPlayer);
         }, 0L, 20L).getTaskId());
     }
 
     public void startBossBarScheduler(CheckedPlayer checkedPlayer) {
-        if(checkedPlayer == null) return;
+        if (checkedPlayer == null) return;
 
         Bossbar bossBar = new Bossbar(plugin, checkedPlayer);
         bossbarScheduler.put(checkedPlayer, plugin.getServer().getScheduler().runTaskTimer(plugin, bossBar::show, 0L, 20L).getTaskId());
@@ -119,7 +123,7 @@ public final class Runnables {
         Player player = checkedPlayer.getPlayer();
         Player inspector = checkedPlayer.getInspector();
 
-        if(inspector == null || !inspector.isOnline()) {
+        if (inspector == null || !inspector.isOnline()) {
             checkedPlayer.disprove();
             return;
         }
@@ -152,13 +156,13 @@ public final class Runnables {
         Player player = checkedPlayer.getPlayer();
         Player inspector = checkedPlayer.getInspector();
 
-        if(inspector == null || !inspector.isOnline()) {
+        if (inspector == null || !inspector.isOnline()) {
             checkedPlayer.disprove();
             return;
         }
 
         Long timer = checkedPlayer.getTimer();
-        if(timer != null) {
+        if (timer != null) {
             boolean titleEnabled = plugin.getConfig().getBoolean("settings.title");
             if (titleEnabled) {
                 String titleMessage = plugin.getMessageConfig().getConfig().getString("screen.check-title");
@@ -174,5 +178,31 @@ public final class Runnables {
         }
 
     }
+
+    public void addLog(String username, String text) {
+        boolean enabled = plugin.getConfig().getBoolean("settings.logging", false);
+        if(!enabled) return;
+
+        text = text.replaceAll("&.", "").replaceAll("#.", "");
+
+        BukkitConfig log = new BukkitConfig(plugin, "logs", username + ".yml", false);
+        List<String> list = log.getConfig().getStringList("log");
+        list.add(text);
+
+        log.getConfig().set("log", list);
+        log.saveConfig();
+    }
+
+    public void sendPunishmentCommand(Player player, String alias) {
+        final ConsoleCommandSender console = plugin.getServer().getConsoleSender();
+        List<String> commands = plugin.getConfig().getStringList("commands." + alias);
+
+        if(!commands.isEmpty()) {
+            commands.forEach(command ->
+                    plugin.getServer().dispatchCommand(console, command.replace("<player>", player.getName()))
+            );
+        }
+    }
+
 
 }

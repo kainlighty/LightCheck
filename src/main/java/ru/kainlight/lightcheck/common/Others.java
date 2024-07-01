@@ -1,4 +1,4 @@
-package ru.kainlight.lightcheck.COMMON;
+package ru.kainlight.lightcheck.common;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;

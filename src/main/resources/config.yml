@@ -7,12 +7,12 @@
 # lightcheck.stop-all - /check stop-all > Stop all checks now
 # lightcheck.bypass > protection against a call for verification
 
-config-version: 1.0
+config-version: 1.2
 # only when the server is turned on
 update-notification: true
 
 # Russian or English available now
-language: RUSSIAN
+language: ENGLISH
 
 settings:
   title: true
@@ -20,6 +20,7 @@ settings:
   bossbar: true
   message-timer: 10 # every 10 seconds a message will be sent
   timer: 300 # after how many seconds will the player be banned
+  logging: true
 
 # block-move may conflict with anti-cheats
 abilities:
@@ -38,8 +39,11 @@ abilities:
 
 # Example for disable: approve: []
 commands:
+  confirm:
+    - "kick <player> Self-recognition in cheats"
   approve: # If the PLAYER pleads guilty or the STAFF recognizes the player as a cheater
     - "kick <player> Recognition of the use of cheats"
+  disprove: []
   quit:
     - "kick <player> Exit from verification"
   kick:

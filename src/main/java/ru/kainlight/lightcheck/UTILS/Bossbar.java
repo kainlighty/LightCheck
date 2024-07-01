@@ -5,11 +5,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
-import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 import ru.kainlight.lightcheck.API.CheckedPlayer;
 import ru.kainlight.lightcheck.API.LightCheckAPI;
-import ru.kainlight.lightcheck.COMMON.lightlibrary.UTILS.Parser;
+import ru.kainlight.lightcheck.common.lightlibrary.UTILS.Parser;
 import ru.kainlight.lightcheck.Main;
 
 import java.util.Map;

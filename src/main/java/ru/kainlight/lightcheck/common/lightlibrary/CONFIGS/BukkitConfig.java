@@ -1,9 +1,8 @@
-package ru.kainlight.lightcheck.COMMON.lightlibrary.CONFIGS;
+package ru.kainlight.lightcheck.common.lightlibrary.CONFIGS;
 
-import lombok.Setter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import ru.kainlight.lightcheck.COMMON.lightlibrary.LightPlugin;
+import ru.kainlight.lightcheck.common.lightlibrary.LightPlugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,14 +25,14 @@ public final class BukkitConfig {
     private FileConfiguration fileConfiguration;
 
     public BukkitConfig(LightPlugin plugin, String fileName) {
-        this(plugin, null, fileName);
+        this(plugin, null, fileName, true);
     }
 
-    public BukkitConfig(LightPlugin plugin, String subdirectory, String fileName) {
+    public BukkitConfig(LightPlugin plugin, String subdirectory, String fileName, boolean save) {
         this.plugin = plugin;
         this.subdirectory = subdirectory;
         this.fileName = fileName;
-        saveDefaultConfig();
+        if(save) saveDefaultConfig();
     }
 
 
@@ -92,7 +91,7 @@ public final class BukkitConfig {
         String fileName = this.fileName.replace(".yml", "");
         if (!lang.equalsIgnoreCase(fileName)) {
             String langFile = lang + ".yml";
-            plugin.messageConfig = new BukkitConfig(plugin, "messages", langFile.toLowerCase());
+            plugin.messageConfig = new BukkitConfig(plugin, "messages", langFile.toLowerCase(), true);
         }
         this.reloadConfig();
     }
@@ -116,7 +115,7 @@ public final class BukkitConfig {
                         // Если элемент - файл в папке messages, то сохранить его
                         if (name.startsWith("messages/") && name.endsWith(".yml")) {
                             String fileName = name.substring("messages/".length());
-                            plugin.messageConfig = new BukkitConfig(plugin, "messages", fileName);
+                            plugin.messageConfig = new BukkitConfig(plugin, "messages", fileName, true);
                         }
                     }
                 }
@@ -125,7 +124,7 @@ public final class BukkitConfig {
             }
         }
         String langFile = plugin.getConfig().getString(pathToLang) + ".yml";
-        plugin.messageConfig = new BukkitConfig(plugin, "messages", langFile.toLowerCase());
+        plugin.messageConfig = new BukkitConfig(plugin, "messages", langFile.toLowerCase(), true);
         plugin.messageConfig.reloadConfig();
     }
 
