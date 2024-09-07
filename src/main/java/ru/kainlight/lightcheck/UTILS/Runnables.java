@@ -140,14 +140,16 @@ public final class Runnables {
                         .replace("<minutes>", secToMin.toString())
                         .replace("<seconds>", timer.toString());
 
-                LightPlayer.of(player).sendClickableHoverMessage(message, hoverMessage, "/check confirm");
+                if(hoverMessage != null && !hoverMessage.isBlank()) LightPlayer.of(player).sendClickableHoverMessage(message, hoverMessage, "/check confirm");
+                else LightPlayer.of(player).sendMessage(message);
             });
         } else {
             List<String> without_timer = plugin.getMessageConfig().getConfig().getStringList("chat.without-timer");
             without_timer.forEach(message -> {
                 message = message.replace("<inspector>", inspector.getName());
 
-                LightPlayer.of(player).sendClickableHoverMessage(message, hoverMessage, "/check confirm");
+                if(hoverMessage != null && !hoverMessage.isBlank()) LightPlayer.of(player).sendClickableHoverMessage(message, hoverMessage, "/check confirm");
+                else LightPlayer.of(player).sendMessage(message);
             });
         }
     }
