@@ -1,79 +1,96 @@
-config-version: 1.2
+config-version: 1.4
 # To use spaces, use \n or |, if you want to remove the indentation, change any text.
 # Example disprove > player: "&a&l» &fYou were found not guilty, have a nice game!"
 
+help:
+  commands:
+    - ''
+    - '<red><st>   </st><yellow><bold> LIGHTCHECK HELP <red><st>   </st>'
+    - '<red><bold>» </bold><green>/check list <dark_gray>- <gray>the list of currently checking'
+    - '<red><bold>» </bold><green>/check <player> <dark_gray>- <gray>summon to check'
+    - '<red><bold>» </bold><green>/check confirm <dark_gray>- <gray>plead guilty'
+    - '<red><bold>» </bold><green>/check approve <dark_gray>- <gray>find guilty'
+    - '<red><bold>» </bold><green>/check disprove <dark_gray>- <gray>find not guilty'
+    - '<red><bold>» </bold><green>/check timer stop <dark_gray>- <gray>disable the timer'
+    - '<red><bold>» </bold><green>/check stop-all <dark_gray>- <gray>cancel all current checks'
+    - '<red><bold>» </bold><green>/check reload <dark_gray>- <gray>reload all configurations (only console)'
+    - ''
+
 list:
-  header: "\n  &8&m   &e&l LIGHTCHECK LIST &8&m   "
-  body: "&c<inspector> &7› &a<username>"
-  footer: "Now checked: <count> players"
+  header: "<newline>  <dark_gray><st>   </st><yellow><bold> LIGHTCHECK LIST <dark_gray><st>   </st>"
+  body: "<red>#inspector# <gray>› <green>#username#"
+  footer: "Now checked: #count# players"
 
 successfully:
-  call: "&a&l» &fPlayer &e<username> &fhas been called for verification"
-  offline-call: "&a&l» &fPlayer &e<username> &fhas been called for offline verification"
+  reload: "<green><bold>» </bold><white>Plugin successfully reloaded"
+  call: "<green><bold>» </bold><white>Player <yellow>#username# <white>has been called for verification"
+  offline-call: "<green><bold>» </bold><white>Player <yellow>#username# <white>has been called for offline verification"
   timer:
-    continue: "&a&l» &fYou have restored the timer to the player <username> &7(<value>)"
-    stop: "&a&l» &fYou have stopped the timer for the player <username>"
-  stop-all: "&a&l» &fAll checked players disproved"
-  confirm: "&a&l» &fChecked &e<username> &fconfessed to using cheats"
-  approve: "&a&l» &fPlayer &e<username> &ffound guilty of using cheats"
+    continue: "<green><bold>» </bold><white>You have restored the timer to the player #username# <gray>(#value#)"
+    stop: "<green><bold>» </bold><white>You have stopped the timer for the player #username#"
+  stop-all: "<green><bold>» </bold><white>All checked players disproved"
+  confirm: "<green><bold>» </bold><white>Checked <yellow>#username# <white>confessed to using cheats"
+  approve: "<green><bold>» </bold><white>Player <yellow>#username# <white>found guilty of using cheats"
   disprove:
     player: |
-      &a&l» &fYou were found not guilty!
-      &a&l» &aHave a nice game!
-    staff: "&a&l» &fPlayer &e<username> &ffound not guilty"
+      <green><bold>» </bold><white>You were found not guilty!
+      <green><bold>» </bold><green>Have a nice game!
+    staff: "<green><bold>» </bold><white>Player <yellow>#username# <white>found not guilty"
 
 errors:
-  already: "&c&l» &fThe player is already being checked"
-  already-self: "&c&l» &fYou are already being checked"
-  call-self: "&c&l» &fYou can't call yourself in for a check"
-  not-found: "&c&l» &fPlayer not found"
-  no-timer: "&c&l» &fPlayer <username> does not have a timer"
-  bypass: "&c&l» &fPlayer &e<username> &fprotected from checks"
+  no-permissions: "<red><bold>» </bold><white>You don't have permissions to this command"
+  already: "<red><bold>» </bold><white>The player is already being checked"
+  already-self: "<red><bold>» </bold><white>You are already being checked"
+  call-self: "<red><bold>» </bold><white>You can't call yourself in for a check"
+  not-found: "<red><bold>» </bold><white>Player not found"
+  no-timer: "<red><bold>» </bold><white>Player #username# does not have a timer"
+  bypass: "<red><bold>» </bold><white>Player <yellow>#username# <white>protected from checks"
+  no-checks: "<red><bold>» </bold><white>There are no active checks"
 
 screen:
-  check-title: "&c&lVERIFICATION"
-  check-subtitle: "&fYou have been called for verification!"
-  disprove-title: "&a&lVERIFICATION PASSED!"
-  disprove-subtitle: "&fYou were found not guilty!"
-  actionbar: "You have <seconds> seconds left"
-  bossbar: "You have <seconds> seconds left"
+  check-title: "<red><bold>VERIFICATION"
+  check-subtitle: "<white>You have been called for verification!"
+  disprove-title: "<green><bold>VERIFICATION PASSED!"
+  disprove-subtitle: "<white>You were found not guilty!"
+  actionbar: "You have #seconds# seconds left"
+  bossbar: "You have #seconds# seconds left"
 
 chat:
-  hover: "&a&l» &fClick to confirm"
+  hover: "<green><bold>» </bold><white>Click to confirm"
   with-timer:
-    - ''
-    - '&c&l       VERIFICATION'
-    - '&f You are suspected of using cheats'
-    - '&f   by inspector: &e<inspector>'
-    - ''
-    - '&f  You have <minutes> minutes' # or <seconds>
-    - ''
-    - '&f  Follow the steps below'
-    - '&f  - Write your discord in the chat'
-    - '&f  - Dont quit the game'
-    - ''
-    - '&f Wait for the inspector in the discord'
-    - ''
-    - '&f    If you want to confess'
-    - '&f    Write: &6/check confirm'
-    - '&7     or click this message'
-    - ''
+    - '<newline>'
+    - '<red><bold>       VERIFICATION'
+    - '<white> You are suspected of using cheats'
+    - '<white>   by inspector: <yellow>#inspector#'
+    - '<newline>'
+    - '<white>  You have #minutes# minutes' # or #seconds#
+    - '<newline>'
+    - '<white>  Follow the steps below'
+    - '<white>  - Write your discord in the chat'
+    - '<white>  - Don''t quit the game'
+    - '<newline>'
+    - '<white> Wait for the inspector in the discord'
+    - '<newline>'
+    - '<white>    If you want to confess'
+    - '<white>    Write: <gold>/check confirm'
+    - '<gray>     or click this message'
+    - '<newline>'
   without-timer:
-    - ''
-    - '&c&l       VERIFICATION'
-    - '&f You are suspected of using cheats'
-    - '&f   by inspector: &e<inspector>'
-    - ''
-    - '&f  Follow the steps below'
-    - '&f  - Write your discord in the chat'
-    - '&f  - Dont quit the game'
-    - ''
-    - '&f Wait for the inspector in the discord'
-    - ''
-    - '&f    If you want to confess'
-    - '&f    Write: &6/check confirm'
-    - '&7     or click this message'
-    - ''
+    - '<newline>'
+    - '<red><bold>       VERIFICATION'
+    - '<white> You are suspected of using cheats'
+    - '<white>   by inspector: <yellow>#inspector#'
+    - '<newline>'
+    - '<white>  Follow the steps below'
+    - '<white>  - Write your discord in the chat'
+    - '<white>  - Don''t quit the game'
+    - '<newline>'
+    - '<white> Wait for the inspector in the discord'
+    - '<newline>'
+    - '<white>    If you want to confess'
+    - '<white>    Write: <gold>/check confirm'
+    - '<gray>     or click this message'
+    - '<newline>'
   dialog: |
-    &c&m   &e&l PRIVATE CHAT &c&m   
-    &a<username> &7› &e<message>
+    <red><st>   </st><yellow><bold> PRIVATE CHAT <red><st>   </st>
+    <green>#username# <gray>› <yellow>#message#

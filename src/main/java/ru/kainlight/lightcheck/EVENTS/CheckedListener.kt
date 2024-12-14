@@ -1,168 +1,168 @@
-package ru.kainlight.lightcheck.EVENTS;
+package ru.kainlight.lightcheck.EVENTS
 
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityPickupItemEvent;
-import org.bukkit.event.player.*;
-import ru.kainlight.lightcheck.API.CheckedPlayer;
-import ru.kainlight.lightcheck.API.LightCheckAPI;
-import ru.kainlight.lightcheck.common.lightlibrary.LightPlayer;
-import ru.kainlight.lightcheck.Main;
+import org.bukkit.entity.Player
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.entity.EntityDamageByEntityEvent
+import org.bukkit.event.entity.EntityDamageEvent
+import org.bukkit.event.entity.EntityPickupItemEvent
+import org.bukkit.event.player.*
+import ru.kainlight.lightcheck.API.CheckedPlayer
+import ru.kainlight.lightcheck.API.LightCheckAPI
+import ru.kainlight.lightcheck.Main
+import ru.kainlight.lightlibrary.multiMessage
+import java.util.*
 
-import java.util.List;
-import java.util.Optional;
-
-public class CheckedListener implements Listener {
-
-    private final Main plugin;
-
-    public CheckedListener(Main plugin) {
-        this.plugin = plugin;
-    }
+class CheckedListener(val plugin: Main) : Listener {
 
     @EventHandler
-    public void onJoinChecked(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        String inspectorName = plugin.getRunnables().offlineChecks.get(player);
+    fun onJoinChecked(event: PlayerJoinEvent) {
+        val player = event.getPlayer();
+        val inspectorName: String? = plugin.runnables.offlineChecks.get(player)
 
-        if(inspectorName != null) {
-            Player inspector = plugin.getServer().getPlayer(inspectorName);
+        if (inspectorName != null) {
+            val inspector: Player? = plugin.getServer().getPlayer(inspectorName)
 
-            if(inspector != null) LightCheckAPI.get().call(player, inspector);
-            plugin.getRunnables().offlineChecks.remove(player);
+            if (inspector != null) LightCheckAPI.get().call(player, inspector)
+            plugin.runnables.offlineChecks.remove(player)
         }
 
     }
 
     @EventHandler
-    public void onQuitChecked(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        Optional<CheckedPlayer> checkedPlayer = LightCheckAPI.get().getCheckedPlayer(player);
+    fun onQuitChecked(event: PlayerQuitEvent) {
+        val player = event.getPlayer();
+        val checkedPlayer: Optional<CheckedPlayer> = LightCheckAPI.get().getCheckedPlayer(player);
 
-        checkedPlayer.ifPresent(checked -> {
+        checkedPlayer.ifPresent { checked ->
             checked.approve();
-            plugin.getRunnables().sendPunishmentCommand(checked.getPlayer(), "quit");
-        });
+            plugin.runnables.sendPunishmentCommand(checked.player, "quit")
+        }
 
     }
 
     @EventHandler
-    public void onKickChecked(PlayerKickEvent event) {
-        Player player = event.getPlayer();
-        Optional<CheckedPlayer> checkedPlayer = LightCheckAPI.get().getCheckedPlayer(player);
+    fun onKickChecked(event: PlayerKickEvent) {
+        val player = event.player;
+        val checkedPlayer: Optional<CheckedPlayer> = LightCheckAPI.get().getCheckedPlayer(player)
 
-        if (checkedPlayer.isPresent()) {
-            CheckedPlayer checked = checkedPlayer.get();
-            checked.approve();
+        if (checkedPlayer.isPresent) {
+            val checked: CheckedPlayer = checkedPlayer.get()
+            checked.approve()
 
-            var timer = checked.getTimer();
+            val timer: Long? = checked.timer
             if (timer != null && timer >= 0) {
-                plugin.getRunnables().sendPunishmentCommand(checked.getPlayer(), "kick");
+                plugin.runnables.sendPunishmentCommand(checked.getPlayer(), "kick")
             }
         }
     }
 
     @EventHandler
-    public void onCommandsChecked(PlayerCommandPreprocessEvent event) {
-        Player player = event.getPlayer();
+    fun onCommandsChecked(event: PlayerCommandPreprocessEvent) {
+        val player: Player = event.player;
 
         if (isCheckingAndAbilityEnabled(player, "block-chat.enable")) {
-            List<String> allowedCommands = plugin.getConfig().getStringList("abilities.block-chat.allowed-commands");
-            String[] message = event.getMessage().replace("/", "").split(" ");
+            val allowedCommands: MutableList<String> = plugin.getConfig().getStringList("abilities.block-chat.allowed-commands")
+            val message: List<String> = event.message.replace("/", "").split(" ")
 
-            if (!allowedCommands.contains(message[0])) {
-                event.setCancelled(true);
+            if (! allowedCommands.contains(message[0])) {
+                event.isCancelled = true
             }
         }
     }
 
 
     @EventHandler
-    public void onChatChecked(AsyncPlayerChatEvent event) {
-        Player player = event.getPlayer();
+    fun onChatChecked(event: AsyncPlayerChatEvent) {
+        val player: Player = event.player
 
         if (isCheckingAndAbilityEnabled(player, "block-chat.enable")) {
-            event.setCancelled(true);
+            event.isCancelled = true
 
-            Player staff = LightCheckAPI.get().getCheckedPlayer(player).get().getInspector();
-            String privateDialog = plugin.getMessageConfig().getConfig().getString("chat.dialog")
-                    .replace("<username>", player.getName())
-                    .replace("<message>", event.getMessage());
+            val staff: Player = LightCheckAPI.get().getCheckedPlayer(player).get().getInspector()
+            val privateDialog: String = plugin.getMessageConfig().getString("chat.dialog")
+                ?.replace("#username#", player.name)
+                ?.replace("#message#", event.message)!!
 
-            LightPlayer.sendMessage(privateDialog, player, staff);
+            this.privateMessage(privateDialog, player, staff)
         }
     }
 
     @EventHandler
-    public void onMoveChecked(PlayerMoveEvent event) {
-        Player player = event.getPlayer();
+    fun onMoveChecked(event: PlayerMoveEvent) {
+        val player: Player = event.player
 
         if (isCheckingAndAbilityEnabled(player, "block-move")) {
-            event.setTo(event.getFrom());
+            event.to = event.from
         }
     }
 
     @EventHandler
-    public void onDropItemsChecked(PlayerDropItemEvent event) {
-        Player player = event.getPlayer();
+    fun onDropItemsChecked(event: PlayerDropItemEvent) {
+        val player: Player = event.player;
 
         if (isCheckingAndAbilityEnabled(player, "block-drops")) {
-            event.setCancelled(true);
+            event.isCancelled = true
         }
     }
 
     @EventHandler
-    public void onPickupItemsChecked(EntityPickupItemEvent event) {
-        if (event.getEntity() instanceof Player player) {
-            if (isCheckingAndAbilityEnabled(player, "block-pickup")) {
-                event.setCancelled(true);
+    fun onPickupItemsChecked(event: EntityPickupItemEvent) {
+        val entity = event.entity
+        if (entity is Player) {
+            if (isCheckingAndAbilityEnabled(entity, "block-pickup")) {
+                event.isCancelled = true
             }
         }
     }
 
     @EventHandler
-    public void onDamageChecked(EntityDamageEvent event) {
-        if (event.getEntity() instanceof Player player) {
-            if (isCheckingAndAbilityEnabled(player, "block-damage")) {
-                event.setCancelled(true);
+    fun onDamageChecked(event: EntityDamageEvent) {
+        val entity = event.entity
+        if (entity is Player) {
+            if (isCheckingAndAbilityEnabled(entity, "block-damage")) {
+                event.isCancelled = true
             }
         }
     }
 
     @EventHandler
-    public void onDamageChecked(EntityDamageByEntityEvent event) {
-        if (event.getEntity() instanceof Player player) {
-            if (isCheckingAndAbilityEnabled(player, "block-damage")) {
-                event.setCancelled(true);
+    fun onDamageChecked(event: EntityDamageByEntityEvent) {
+        val entity = event.entity
+        if (entity is Player) {
+            if (isCheckingAndAbilityEnabled(entity, "block-damage")) {
+                event.isCancelled = true
             }
         }
     }
 
     @EventHandler
-    public void onInteractChecked(PlayerInteractEvent event) {
-        Player player = event.getPlayer();
+    fun onInteractChecked(event: PlayerInteractEvent) {
+        val player: Player = event.player;
 
         if (isCheckingAndAbilityEnabled(player, "block-interact")) {
-            event.setCancelled(true);
+            event.isCancelled = true
         }
     }
 
     @EventHandler
-    public void onGamemodeChangeChecked(PlayerGameModeChangeEvent event) {
-        Player player = event.getPlayer();
+    fun onGamemodeChangeChecked(event: PlayerGameModeChangeEvent) {
+        val player: Player = event.player;
 
         if (isCheckingAndAbilityEnabled(player, "block-gamemode")) {
-            event.setCancelled(true);
+            event.isCancelled = true
         }
     }
 
-    private boolean isCheckingAndAbilityEnabled(Player player, String abilityName) {
-        boolean isChecked = LightCheckAPI.get().isChecking(player);
-        boolean abilityEnabled = plugin.getConfig().getBoolean("abilities." + abilityName);
-        return isChecked && abilityEnabled;
+    private fun isCheckingAndAbilityEnabled(player: Player, abilityName: String): Boolean {
+        val isChecked: Boolean = LightCheckAPI.get().isChecking(player);
+        val abilityEnabled: Boolean = plugin.config.getBoolean("abilities.$abilityName")
+        return isChecked && abilityEnabled
+    }
+
+    @SafeVarargs
+    private fun privateMessage(text: String, vararg players: Player){
+        players.forEach { it.multiMessage(text) }
     }
 
 }

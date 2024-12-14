@@ -1,12 +1,13 @@
 package ru.kainlight.lightcheck.API;
 
-import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import ru.kainlight.lightcheck.API.events.PlayerCheckEvent;
 import ru.kainlight.lightcheck.Main;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 public final class LightCheckAPI {
 
@@ -22,7 +23,6 @@ public final class LightCheckAPI {
      * <p>
      * 2 Player - Player
      */
-    @Getter
     private final Set<CheckedPlayer> checkedPlayers = new HashSet<>();
 
     public void call(Player player, Player inspector) {
@@ -32,12 +32,12 @@ public final class LightCheckAPI {
         LightCheckAPI.get().getCheckedPlayers().add(checkedPlayer);
 
         var event = new PlayerCheckEvent(player);
-        Main.getINSTANCE().getServer().getPluginManager().callEvent(event);
+        Main.getInstance().getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) return;
 
         player.setInvulnerable(true);
-        Main.getINSTANCE().getRunnables().start(checkedPlayer);
         checkedPlayer.teleportToInspector();
+        Main.getInstance().getRunnables().start(checkedPlayer);
     }
 
     public boolean isChecking(CheckedPlayer checkedPlayer) {
@@ -61,5 +61,9 @@ public final class LightCheckAPI {
 
     public void stopAll() {
         Bukkit.getServer().getOnlinePlayers().forEach(online -> this.getCheckedPlayer(online).ifPresent(CheckedPlayer::disprove));
+    }
+
+    public Set<CheckedPlayer> getCheckedPlayers() {
+        return this.checkedPlayers;
     }
 }

@@ -1,281 +1,281 @@
-package ru.kainlight.lightcheck.COMMANDS;
+package ru.kainlight.lightcheck.COMMANDS
 
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import ru.kainlight.lightcheck.API.CheckedPlayer;
-import ru.kainlight.lightcheck.API.LightCheckAPI;
-import ru.kainlight.lightcheck.common.lightlibrary.LightPlayer;
-import ru.kainlight.lightcheck.Main;
+import org.bukkit.command.Command
+import org.bukkit.command.CommandExecutor
+import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
+import ru.kainlight.lightcheck.API.CheckedPlayer
+import ru.kainlight.lightcheck.API.LightCheckAPI
+import ru.kainlight.lightcheck.Main
+import ru.kainlight.lightcheck.UTILS.getAudience
+import ru.kainlight.lightlibrary.equalsIgnoreCase
+import ru.kainlight.lightlibrary.multiMessage
+import ru.kainlight.lightlibrary.title
 
-import java.util.*;
+@Suppress("WARNINGS")
+class Check(val plugin: Main) : CommandExecutor {
 
-public class Check implements CommandExecutor {
+    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
+        if (args.isEmpty()) {
+            if (!(sender.hasPermission("lightcheck.check"))) {
+                sender.noPermissionsMessage()
+                return true
+            }
 
-    private final Main plugin;
-
-    public Check(Main plugin) {
-        this.plugin = plugin;
-    }
-
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, String label, String[] args) {
-        if (args.length == 0) {
-            if (!(commandSender.hasPermission("lightcheck.check"))) return true;
-
-            this.sendHelpMessage(LightPlayer.of(commandSender));
-            return true;
+            plugin.getMessageConfig().getStringList("help.commands").forEach {
+                sender.getAudience().multiMessage(it)
+            }
+            return true
         }
 
-        if (args.length == 1 && !(commandSender instanceof Player)) {
-            if (args[0].equalsIgnoreCase("reload")) {
-                plugin.saveDefaultConfig();
-                plugin.getMessageConfig().saveDefaultConfig();
-                plugin.reloadConfig();
-                plugin.getMessageConfig().reloadConfig();
-
-                plugin.getLogger().info("-- Configurations reloaded --");
+        if (args.size == 1 && args[0].equalsIgnoreCase("reload")) {
+            if (!sender.hasPermission("lightcheck.reload")) {
+                sender.noPermissionsMessage()
+                return true
             }
 
-            return true;
+            plugin.saveDefaultConfig()
+            plugin.messageConfig.saveDefaultConfig()
+            plugin.reloadConfig()
+            plugin.reloadParseMode()
+            plugin.messageConfig.reloadConfig()
+            plugin.messageConfig.reloadLanguage("language")
+
+            plugin.getMessageConfig().getString("successfully.reload")?.let {
+                sender.getAudience().multiMessage(it)
+            }
+            return true
         }
 
-        if (!(commandSender instanceof Player sender)) return true;
-        LightPlayer lightSender = LightPlayer.of(sender);
+        if (sender !is Player) return true
 
-        String subCommand = args[0].toLowerCase();
-        switch (subCommand) {
-            case "list" -> {
-                if (!sender.hasPermission("lightcheck.list")) return true;
-
-                Set<CheckedPlayer> checkedPlayers = LightCheckAPI.get().getCheckedPlayers();
-                Integer checkedPlayersCount = checkedPlayers.size();
-
-                final String header = plugin.getMessageConfig().getConfig().getString("list.header");
-                final String text = plugin.getMessageConfig().getConfig().getString("list.body");
-                final String footer = plugin.getMessageConfig().getConfig().getString("list.footer").replace("<count>", checkedPlayersCount.toString());
-
-                lightSender.sendMessage(header);
-                checkedPlayers.forEach(checked -> {
-                    String message = text.replace("<inspector>", checked.getInspector().getName()).replace("<username>", checked.getPlayer().getName());
-                    lightSender.sendMessage(message);
-                });
-                lightSender.sendMessage(footer);
-                return true;
-            }
-            case "confirm" -> {
-                if (!LightCheckAPI.get().isChecking(sender)) return true;
-                Optional<CheckedPlayer> checkedPlayer = LightCheckAPI.get().getCheckedPlayer(sender);
-                if(checkedPlayer.isEmpty()) return true;
-                CheckedPlayer checked = checkedPlayer.get();
-
-                String approve_player = plugin.getMessageConfig().getConfig().getString("successfully.confirm")
-                        .replace("<username>", sender.getName());
-                LightPlayer.of(checked.getInspector()).sendMessage(approve_player);
-
-                checked.approve();
-                plugin.getRunnables().sendPunishmentCommand(checked.getPlayer(), "confirm");
-
-                plugin.getRunnables().addLog(checked.getPlayer().getName(), approve_player);
-                return true;
-            }
-            case "approve" -> {
-                if (!sender.hasPermission("lightcheck.approve")) return true;
-
-                Optional<CheckedPlayer> checkedPlayer = LightCheckAPI.get().getCheckedPlayerByInspector(sender);
-                if (checkedPlayer.isEmpty()) return true;
-                CheckedPlayer checked = checkedPlayer.get();
-
-                String approve_staff = plugin.getMessageConfig().getConfig().getString("successfully.approve")
-                        .replace("<username>", checked.getPlayer().getName());
-                lightSender.sendMessage(approve_staff);
-
-                checked.approve();
-                plugin.getRunnables().sendPunishmentCommand(checked.getPlayer(), "approve");
-
-                plugin.getRunnables().addLog(checked.getPlayer().getName(), approve_staff);
-                return true;
-            }
-            case "disprove" -> {
-                if (!(sender.hasPermission("lightcheck.disprove"))) return true;
-
-                Optional<CheckedPlayer> checkedPlayer = LightCheckAPI.get().getCheckedPlayerByInspector(sender);
-                if (checkedPlayer.isEmpty()) return true;
-                CheckedPlayer checked = checkedPlayer.get();
-
-                String disproved_for_staff = plugin.getMessageConfig().getConfig().getString("successfully.disprove.staff")
-                        .replace("<username>", checked.getPlayer().getName());
-                lightSender.sendMessage(disproved_for_staff);
-
-                boolean titleEnabled = plugin.getConfig().getBoolean("settings.title");
-                if (titleEnabled) {
-                    String titleMessage = plugin.getMessageConfig().getConfig().getString("screen.disprove-title");
-                    String subTitleMessage = plugin.getMessageConfig().getConfig().getString("screen.disprove-subtitle");
-                    LightPlayer.of(checked.getPlayer()).sendTitle(titleMessage, subTitleMessage, 1, 3, 1);
+        when(args[0].lowercase()) {
+            "list" -> {
+                if (!sender.hasPermission("lightcheck.list")) {
+                    sender.noPermissionsMessage()
+                    return true
                 }
 
-                String disproved_for_player = plugin.getMessageConfig().getConfig().getString("successfully.disprove.player");
-                LightPlayer.of(checked.getPlayer()).sendMessage(disproved_for_player);
+                val checkedPlayers = LightCheckAPI.get().checkedPlayers
+                val checkedPlayersCount = checkedPlayers.size
 
-                checked.disprove();
-                plugin.getRunnables().sendPunishmentCommand(checked.getPlayer(), "disprove");
+                val header: String = plugin.getMessageConfig().getString("list.header")!!
+                val text: String = plugin.getMessageConfig().getString("list.body")!!
+                val footer: String = plugin.getMessageConfig().getString("list.footer")!!
+                    .replace("#count#", checkedPlayersCount.toString())
 
-                plugin.getRunnables().addLog(checked.getPlayer().getName(), disproved_for_staff);
-                return true;
+                sender.getAudience().multiMessage(header)
+                checkedPlayers.forEach{checked: CheckedPlayer ->
+                    val message = text.replace("#inspector#", checked.inspector.name).replace("#username#", checked.player.name)
+                    sender.getAudience().multiMessage(message)
+                }
+                sender.getAudience().multiMessage(footer)
+                return true
             }
-            case "timer" -> {
-                if (!sender.hasPermission("lightcheck.timer.continue") && !sender.hasPermission("lightcheck.timer.stop")) return true;
-                Optional<CheckedPlayer> checkedPlayer = LightCheckAPI.get().getCheckedPlayerByInspector(sender);
-                if (checkedPlayer.isEmpty()) return true;
-                CheckedPlayer checked = checkedPlayer.get();
+            "confirm" -> {
+                if (! LightCheckAPI.get().isChecking(sender)) {
+                    sender.noPermissionsMessage()
+                    return true
+                }
+
+                val checkedPlayer = LightCheckAPI.get().getCheckedPlayer(sender)
+                if (checkedPlayer.isEmpty) {
+                    sender.noChecksMessage()
+                    return true
+                }
+                val checked = checkedPlayer.get()
+
+                val approve_player: String = plugin.getMessageConfig().getString("successfully.confirm")
+                    ?.replace("#username#", sender.getName())!!
+                checked.inspector.multiMessage(approve_player)
+
+                checked.approve()
+                plugin.runnables.sendPunishmentCommand(checked.player, "confirm")
+
+                plugin.runnables.addLog(checked.player.name, approve_player)
+                return true
+            }
+            "approve" -> {
+                if (! sender.hasPermission("lightcheck.approve")) {
+                    sender.noPermissionsMessage()
+                    return true
+                }
+
+                val checkedPlayer = LightCheckAPI.get().getCheckedPlayerByInspector(sender)
+                if (checkedPlayer.isEmpty) {
+                    sender.noChecksMessage()
+                    return true
+                }
+
+                val checked = checkedPlayer.get()
+
+                val approve_staff: String = plugin.getMessageConfig().getString("successfully.approve")
+                    ?.replace("#username#", checked.player.name)!!
+                sender.getAudience().multiMessage(approve_staff)
+
+                checked.approve()
+                plugin.runnables.sendPunishmentCommand(checked.player, "approve")
+
+                plugin.runnables.addLog(checked.player.name, approve_staff)
+                return true
+            }
+            "disprove" -> {
+                if (! (sender.hasPermission("lightcheck.disprove"))) {
+                    sender.noPermissionsMessage()
+                    return true
+                }
+
+                val checkedPlayer = LightCheckAPI.get().getCheckedPlayerByInspector(sender)
+                if (checkedPlayer.isEmpty) {
+                    sender.noChecksMessage()
+                    return true
+                }
+                val checked = checkedPlayer.get()
+
+                val disproved_for_staff: String =
+                    plugin.getMessageConfig().getString("successfully.disprove.staff")
+                        ?.replace("#username#", checked.player.name)!!
+                sender.getAudience().multiMessage(disproved_for_staff)
+
+                val titleEnabled = plugin.config.getBoolean("settings.title")
+                if (titleEnabled) {
+                    val titleMessage: String = plugin.getMessageConfig().getString("screen.disprove-title")!!
+                    val subTitleMessage: String = plugin.getMessageConfig().getString("screen.disprove-subtitle")!!
+                    checked.player.title(titleMessage, subTitleMessage, 1,3,1)
+                }
+
+                val disproved_for_player: String =
+                    plugin.getMessageConfig().getString("successfully.disprove.player")!!
+                checked.player.multiMessage(disproved_for_player)
+
+                checked.disprove()
+                plugin.runnables.sendPunishmentCommand(checked.player, "disprove")
+
+                plugin.runnables.addLog(checked.player.name, disproved_for_staff)
+                return true
+            }
+            "timer" -> {
+                if (! sender.hasPermission("lightcheck.timer.continue") && ! sender.hasPermission("lightcheck.timer.stop")) {
+                    sender.noPermissionsMessage()
+                    return true
+                }
+                val checkedPlayer = LightCheckAPI.get().getCheckedPlayerByInspector(sender)
+                if (checkedPlayer.isEmpty) {
+                    sender.noChecksMessage()
+                    return true
+                }
+                val checked = checkedPlayer.get()
 
                 if (args[1].equalsIgnoreCase("continue") && sender.hasPermission("lightcheck.timer.continue") && !checked.hasTimer()) {
-                    boolean started = checked.startTimer();
+                    val started = checked.startTimer()
 
-                    if(started) {
-                        String message = plugin.getMessageConfig().getConfig().getString("successfully.timer.continue")
-                                .replace("<username>", checked.getPlayer().getName())
-                                .replace("<value>", checked.getTimer().toString());
-                        lightSender.sendMessage(message);
-                        plugin.getRunnables().addLog(checked.getPlayer().getName(), message);
+                    if (started) {
+                        val message: String =
+                            plugin.getMessageConfig().getString("successfully.timer.continue")
+                                ?.replace("#username#", checked.player.name)
+                                ?.replace("#value#", checked.timer.toString())!!
+                        sender.getAudience().multiMessage(message)
+                        plugin.runnables.addLog(checked.player.name, message)
                     }
-                    return true;
+                    return true
                 }
 
-                if (args[1].equalsIgnoreCase("stop") && sender.hasPermission("lightcheck.timer.stop")) {
-                    boolean stopped = checked.stopTimer();
+                if (args[1].equals("stop", ignoreCase = true) && sender.hasPermission("lightcheck.timer.stop")) {
+                    val stopped = checked.stopTimer()
 
-                    if(stopped) {
-                        String message = plugin.getMessageConfig().getConfig().getString("successfully.timer.stop")
-                                .replace("<username>", checked.getPlayer().getName());
-                        lightSender.sendMessage(message);
-                        plugin.getRunnables().addLog(checked.getPlayer().getName(), message);
+                    if (stopped) {
+                        val message: String = plugin.getMessageConfig().getString("successfully.timer.stop")
+                            ?.replace("#username#", checked.player.name)!!
+                        sender.getAudience().multiMessage(message)
+                        plugin.runnables.addLog(checked.player.name, message)
                     }
-                    return true;
+                    return true
                 }
-                return true;
+                return true
             }
-            case "stopall", "stop-all" -> {
-                if (!(sender.hasPermission("lightcheck.stop-all"))) return true;
+            "stopall", "stop-all" -> {
+                if (! (sender.hasPermission("lightcheck.stop-all"))) {
+                    sender.noPermissionsMessage()
+                    return true
+                }
 
-                String stopall = plugin.getMessageConfig().getConfig().getString("successfully.stop-all");
-                lightSender.sendMessage(stopall);
+                val stopall: String = plugin.getMessageConfig().getString("successfully.stop-all")!!
+                sender.getAudience().multiMessage(stopall)
 
-                LightCheckAPI.get().stopAll();
-                return true;
+                LightCheckAPI.get().stopAll()
+                return true
             }
-            default -> {
-                if (!sender.hasPermission("lightcheck.check")) return true;
-                if(args.length != 1) return true;
+            else -> {
+                if (! sender.hasPermission("lightcheck.check")) {
+                    sender.noPermissionsMessage()
+                    return true
+                }
+                if (args.size != 1) return true
 
-                String username = args[0];
-                OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer(username);
-                Player player = plugin.getServer().getPlayer(username);
+                val username = args[0]
+                val offlinePlayer = plugin.server.getOfflinePlayer(username)
+                val player = plugin.server.getPlayer(username)
 
-                if (!offlinePlayer.hasPlayedBefore() && player == null) {
-                    String notFound = plugin.getMessageConfig().getConfig().getString("errors.not-found");
-                    lightSender.sendMessage(notFound);
-                    return true;
-                } else if(offlinePlayer.hasPlayedBefore() && player == null) {
-                    plugin.getRunnables().offlineChecks.putIfAbsent(offlinePlayer, sender.getName());
+                if (! offlinePlayer.hasPlayedBefore() && player == null) {
+                    val notFound: String = plugin.getMessageConfig().getString("errors.not-found")!!
+                    sender.getAudience().multiMessage(notFound)
+                    return true
+                } else if (offlinePlayer.hasPlayedBefore() && player == null) {
+                    plugin.runnables.offlineChecks.putIfAbsent(offlinePlayer, sender.getName())
 
-                    String offlineCall = plugin.getMessageConfig().getConfig().getString("successfully.offline-call").replace("<username>", username);
-                    lightSender.sendMessage(offlineCall);
+                    val offlineCall: String =
+                        plugin.getMessageConfig().getString("successfully.offline-call")!!
+                            .replace("#username#", username)
+                    sender.getAudience().multiMessage(offlineCall)
 
-                    plugin.getRunnables().addLog(offlinePlayer.getName(), offlineCall);
-                    return true;
+                    plugin.runnables.addLog(offlinePlayer.name !!, offlineCall)
+                    return true
                 }
 
-                if (player.hasPermission("lightcheck.bypass")) {
-                    String already = plugin.getMessageConfig().getConfig().getString("errors.bypass").replace("<username>", player.getName());
-                    lightSender.sendMessage(already);
-                    return true;
+                if (player !!.hasPermission("lightcheck.bypass")) {
+                    val already: String = plugin.getMessageConfig().getString("errors.bypass")!!
+                        .replace("#username#", player !!.name)
+                    sender.getAudience().multiMessage(already)
+                    return true
                 }
 
-                if (player.equals(sender)) {
-                    String call_self = plugin.getMessageConfig().getConfig().getString("errors.call-self");
-                    lightSender.sendMessage(call_self);
-                    return true;
+                if (player == sender) {
+                    val call_self: String = plugin.getMessageConfig().getString("errors.call-self")!!
+                    sender.getAudience().multiMessage(call_self)
+                    return true
                 }
 
-                if(LightCheckAPI.get().isCheckingByInspector(sender)) {
-                    String already_self = plugin.getMessageConfig().getConfig().getString("errors.already-self");
-                    lightSender.sendMessage(already_self);
-                    return true;
+                if (LightCheckAPI.get().isCheckingByInspector(sender)) {
+                    val already_self: String = plugin.getMessageConfig().getString("errors.already-self")!!
+                    sender.getAudience().multiMessage(already_self)
+                    return true
                 }
 
-                Optional<CheckedPlayer> checkedPlayer = LightCheckAPI.get().getCheckedPlayer(player);
-                if (checkedPlayer.isPresent()) {
-                    String already = plugin.getMessageConfig().getConfig().getString("errors.already");
-                    lightSender.sendMessage(already);
-                    return true;
+                val checkedPlayer = LightCheckAPI.get().getCheckedPlayer(player)
+                if (checkedPlayer.isPresent) {
+                    val already: String = plugin.getMessageConfig().getString("errors.already")!!
+                    sender.getAudience().multiMessage(already)
+                    return true
                 }
 
-                LightCheckAPI.get().call(player, sender);
-                String call = plugin.getMessageConfig().getConfig().getString("successfully.call").replace("<username>", username);
-                lightSender.sendMessage(call);
+                LightCheckAPI.get().call(player, sender)
+                val call: String = plugin.getMessageConfig().getString("successfully.call")?.replace("#username#", username) !!
+                sender.getAudience().multiMessage(call)
 
-                plugin.getRunnables().addLog(player.getName(), call);
-                return true;
+                plugin.runnables.addLog(player.name, call)
+                return true
             }
         }
     }
 
-    private void sendHelpMessage(LightPlayer sender) {
-        String lang = plugin.getConfig().getString("language");
-
-        sender.sendMessage(" ");
-        if (lang.equalsIgnoreCase("russian")) {
-            sender.sendMessage(" &c&m   &e&l LIGHTCHECK ПОМОЩЬ &c&m   ");
-            sender.sendMessage(" &c&l» &a/check list &8- &7список текущих проверок");
-            sender.sendMessage(" &c&l» &a/check <player> &8- &7вызвать на проверку");
-            sender.sendMessage(" &c&l» &a/check confirm &8- &7признаться виновным");
-            sender.sendMessage(" &c&l» &a/check approve &8- &7признать виновным");
-            sender.sendMessage(" &c&l» &a/check disprove  &8- &7признать невиновным");
-            sender.sendMessage(" &c&l» &a/check timer stop &8- &7отключить таймер");
-            sender.sendMessage(" &c&l» &a/check stop-all &8- &7отменить все текущие проверки");
-            sender.sendMessage(" &c&l» &a/check reload &8- &7перезагрузить конфигурации (для консоли)");
-        } else {
-            sender.sendMessage(" &c&m   &e&l LIGHTCHECK HELP &c&m   ");
-            sender.sendMessage(" &c&l» &a/check list &8- &7the list of currently checking");
-            sender.sendMessage(" &c&l» &a/check <player> &8- &7summon to check");
-            sender.sendMessage(" &c&l» &a/check confirm &8- &7plead guilty");
-            sender.sendMessage(" &c&l» &a/check approve &8- &7find guilty");
-            sender.sendMessage(" &c&l» &a/check disprove  &8- &7find not guilty");
-            sender.sendMessage(" &c&l» &a/check timer stop &8- &7disable the timer");
-            sender.sendMessage(" &c&l» &a/check stop-all &8- &7cancel all current checks");
-            sender.sendMessage(" &c&l» &a/check reload &8- &7reload all configurations (only console)");
+    private fun CommandSender.noPermissionsMessage() {
+        plugin.getMessageConfig().getString("errors.no-permissions")?.let {
+            this.getAudience().multiMessage(it)
         }
-        sender.sendMessage(" ");
     }
-
-
-    public static final class Completer implements TabCompleter {
-
-        private final Main plugin;
-
-        public Completer(Main plugin) {
-            this.plugin = plugin;
-        }
-
-        @Override
-        public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-            if (!sender.hasPermission("lightcheck.check")) return null;
-
-            if (cmd.getName().equalsIgnoreCase("lightcheck") || cmd.getName().equalsIgnoreCase("check")) {
-                if (args.length == 1) {
-                    List<String> completionsCopy = new ArrayList<>(Arrays.asList("list", "approve", "disprove", "timer", "stop-all"));
-                    List<String> playerNames = plugin.getServer().getOnlinePlayers().stream().map(Player::getName).toList();
-                    completionsCopy.addAll(playerNames);
-                    return completionsCopy;
-                } else if (args.length == 2 && args[0].equalsIgnoreCase("timer")) {
-                    return Arrays.asList("continue", "stop");
-                }
-            }
-            return null;
+    private fun CommandSender.noChecksMessage() {
+        plugin.getMessageConfig().getString("errors.no-checks")?.let {
+            this.getAudience().multiMessage(it)
         }
     }
 

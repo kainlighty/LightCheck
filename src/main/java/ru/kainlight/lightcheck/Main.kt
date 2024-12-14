@@ -1,50 +1,65 @@
-package ru.kainlight.lightcheck;
+package ru.kainlight.lightcheck
 
-import lombok.Getter;
-import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.ApiStatus.Internal;
-import ru.kainlight.lightcheck.COMMANDS.Check;
-import ru.kainlight.lightcheck.EVENTS.CheckedListener;
-import ru.kainlight.lightcheck.UTILS.Runnables;
-import ru.kainlight.lightcheck.common.lightlibrary.CONFIGS.BukkitConfig;
-import ru.kainlight.lightcheck.common.lightlibrary.LightPlugin;
-import ru.kainlight.lightcheck.common.lightlibrary.UTILS.Initiators;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences
+import org.bukkit.configuration.file.FileConfiguration
+import org.bukkit.event.HandlerList
+import ru.kainlight.lightcheck.COMMANDS.Check
+import ru.kainlight.lightcheck.COMMANDS.Completer
+import ru.kainlight.lightcheck.EVENTS.CheckedListener
+import ru.kainlight.lightcheck.UTILS.Runnables
+import ru.kainlight.lightlibrary.LightConfig
+import ru.kainlight.lightlibrary.LightPlugin
+import ru.kainlight.lightlibrary.UTILS.Init
+import ru.kainlight.lightlibrary.UTILS.Parser
 
-@Getter
-@Internal
-@SuppressWarnings("all")
-public final class Main extends LightPlugin {
+class Main : LightPlugin() {
 
-    @Getter
-    private static Main INSTANCE;
-    private Runnables runnables;
+    lateinit var bukkitAudiences: BukkitAudiences
+    lateinit var runnables: Runnables
 
-    @Override
-    public void onLoad() {
-        this.saveDefaultConfig();
-        updateConfig();
+    override fun onLoad() {
+        this.saveDefaultConfig()
 
-        BukkitConfig.saveLanguages(this, "language");
-        messageConfig.setConfigVersion(1.2);
-        messageConfig.updateConfig();
+        configurationVersion = 1.4
+        updateConfig()
+        LightConfig.saveLanguages(this, "language")
+        messageConfig.configurationVersion = 1.4
+        messageConfig.updateConfig()
     }
 
-    @Override
-    public void onEnable() {
-        INSTANCE = this;
+    override fun onEnable() {
+        instance = this
 
-        runnables = new Runnables(this);
+        this.reloadParseMode()
 
-        registerCommand("lightcheck", new Check(this), new Check.Completer(this));
-        registerListener(new CheckedListener(this));
+        this.bukkitAudiences = BukkitAudiences.create(this)
 
-        Initiators.startPluginMessage(this);
+        this.runnables = Runnables(this)
+
+        this.registerCommand("lightcheck", Check(this), Completer(this))
+        this.registerListener(CheckedListener(this))
+
+        Init.start(this, true)
     }
 
-    @Override
-    public void onDisable() {
-        HandlerList.unregisterAll(this);
-        this.getServer().getScheduler().cancelTasks(this);
+    override fun onDisable() {
+        HandlerList.unregisterAll(this)
+        this.server.scheduler.cancelTasks(this)
+
+        Init.stop(this)
+    }
+
+    fun getMessageConfig(): FileConfiguration {
+        return this.messageConfig.getConfig()
+    }
+
+    fun reloadParseMode() {
+        Parser.parseMode = this.config.getString("settings.parse_mode", "MINIMESSAGE")!!
+    }
+
+    companion object {
+        @JvmStatic lateinit var instance: Main
     }
 
 }
+

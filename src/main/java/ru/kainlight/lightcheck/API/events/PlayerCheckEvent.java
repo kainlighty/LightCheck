@@ -1,7 +1,5 @@
 package ru.kainlight.lightcheck.API.events;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -14,12 +12,9 @@ import java.util.Optional;
 
 public final class PlayerCheckEvent extends PlayerEvent implements Cancellable {
 
-    @Getter
     private static final HandlerList handlerList = new HandlerList();
 
     private final Player player;
-
-    @Getter @Setter
     private boolean isCancelled = false;
 
     public PlayerCheckEvent(@NotNull Player player) {
@@ -29,6 +24,20 @@ public final class PlayerCheckEvent extends PlayerEvent implements Cancellable {
 
     public Optional<CheckedPlayer> getCheckedPlayer() {
         return LightCheckAPI.get().getCheckedPlayer(player);
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlerList;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return isCancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean value) {
+        this.isCancelled = value;
     }
 
     @Override

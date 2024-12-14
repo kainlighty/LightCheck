@@ -110,5 +110,7 @@ buildNumber.properties
 .flattened-pom.xml
 
 # Common working directory
-/psd/
-/UPD/
+.gradle/
+gradle/
+.kotlin
+/build

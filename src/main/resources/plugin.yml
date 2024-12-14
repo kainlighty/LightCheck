@@ -1,6 +1,6 @@
 name: LightCheck
 main: ru.kainlight.lightcheck.Main
-version: '${project.version}'
+version: '2.2.3'
 api-version: '1.17'
 
 author: kainlight
@@ -8,8 +8,10 @@ description: '${pom.description}'
 website: '${pom.organization.url}'
 
 libraries:
-  - net.kyori:adventure-api:${kyori.adventure}
-  - net.kyori:adventure-platform-bukkit:${kyori.adventure.platform}
+  - org.jetbrains.kotlin:kotlin-stdlib:2.0.20
+  - net.kyori:adventure-api:4.17.0
+  - net.kyori:adventure-text-minimessage:4.17.0
+  - net.kyori:adventure-platform-bukkit:4.3.4
 
 softdepend:
   - PlaceholderAPI
@@ -28,9 +30,9 @@ permissions:
   lightcheck.bypass:
     default: op
   lightcheck.confirm:
-    default: not op
+    default: true
   lightcheck.approve:
-    default: not op
+    default: op
   lightcheck.disprove:
     default: op
   lightcheck.timer.continue:

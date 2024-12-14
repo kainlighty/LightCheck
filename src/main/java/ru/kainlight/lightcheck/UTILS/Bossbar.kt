@@ -1,86 +1,71 @@
-package ru.kainlight.lightcheck.UTILS;
+package ru.kainlight.lightcheck.UTILS
 
-import lombok.Getter;
-import org.bukkit.Bukkit;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarStyle;
-import org.bukkit.boss.BossBar;
-import org.bukkit.scheduler.BukkitScheduler;
-import ru.kainlight.lightcheck.API.CheckedPlayer;
-import ru.kainlight.lightcheck.API.LightCheckAPI;
-import ru.kainlight.lightcheck.common.lightlibrary.UTILS.Parser;
-import ru.kainlight.lightcheck.Main;
+import org.bukkit.Bukkit
+import org.bukkit.boss.BarColor
+import org.bukkit.boss.BarStyle
+import org.bukkit.boss.BossBar
+import org.bukkit.scheduler.BukkitScheduler
+import ru.kainlight.lightcheck.API.CheckedPlayer
+import ru.kainlight.lightcheck.API.LightCheckAPI
+import ru.kainlight.lightcheck.Main
+import ru.kainlight.lightlibrary.UTILS.Parser
 
-import java.util.Map;
+class Bossbar(val plugin: Main,
+    val checkedPlayer: CheckedPlayer,
+    val bossBar: BossBar = Bukkit.createBossBar("", BarColor.RED, BarStyle.SOLID),
+    val timer: Long = checkedPlayer.timer,
+    val enabled: Boolean = plugin.config.getBoolean("settings.bossbar")
+){
 
-@Getter
-public final class Bossbar {
-
-    private final Main plugin;
-
-    private final CheckedPlayer checkedPlayer;
-    private final BossBar bossBar;
-    private final long timer;
-    private final boolean enabled;
-
-    public Bossbar(Main plugin, CheckedPlayer checkedPlayer) {
-        this.plugin = plugin;
-        this.enabled = plugin.getConfig().getBoolean("settings.bossbar");
-
-        this.checkedPlayer = checkedPlayer;
-        this.timer = checkedPlayer.getTimer();
-        this.bossBar = Bukkit.createBossBar("", BarColor.RED, BarStyle.SOLID);
-
-        bossBar.setProgress(1.0);
+    init {
+        bossBar.progress = 1.0
     }
 
-    public boolean show() {
-        if (!enabled) return false;
-        if(checkedPlayer == null) return false;
-        Long playerTimer = checkedPlayer.getTimer();
+    fun show(): Boolean {
+        if (!enabled) return false
+        if(checkedPlayer == null) return false
+        val playerTimer: Long? = checkedPlayer.timer
 
         if (playerTimer == null || playerTimer <= 0) {
-            this.hide();
-            return false;
+            this.hide()
+            return false
         }
 
-        if (!LightCheckAPI.get().isChecking(checkedPlayer)) {
-            this.hide();
-            return false;
+        if (! LightCheckAPI.get().isChecking(checkedPlayer)) {
+            this.hide()
+            return false
         }
 
-        String bossbarText = plugin.getMessageConfig().getConfig().getString("screen.bossbar");
-        if (bossbarText == null || bossbarText.isEmpty()) return false;
-        String newName = bossbarText.replace("<seconds>", playerTimer.toString());
-        bossBar.setTitle(Parser.get().hexString(newName));
-        bossBar.setProgress((double) playerTimer / timer);
+        val bossbarText: String? = plugin.getMessageConfig().getString("screen.bossbar")
+        if (bossbarText == null || bossbarText.isEmpty()) return false
+        val newName: String = bossbarText.replace("#seconds#", playerTimer.toString())
+        bossBar.setTitle(Parser.hexString(newName))
+        bossBar.progress = (playerTimer / timer).toDouble()
 
-        bossBar.addPlayer(checkedPlayer.getPlayer());
+        bossBar.addPlayer(checkedPlayer.player)
         return true;
     }
 
-    public void hide() {
-        BukkitScheduler scheduler = plugin.getServer().getScheduler();
+    fun hide() {
+        val scheduler: BukkitScheduler = plugin.server.scheduler
 
-        String bossbarText = plugin.getMessageConfig().getConfig().getString("screen.disprove-title");
+        val bossbarText: String? = plugin.getMessageConfig().getString("screen.disprove-title")
         if (bossbarText == null || bossbarText.isEmpty()) {
-            this.bossBar.removePlayer(checkedPlayer.getPlayer());
-            return;
+            this.bossBar.removePlayer(checkedPlayer.player)
+            return
         }
 
-        bossBar.setTitle(Parser.get().hexString(bossbarText));
-        bossBar.setProgress(0.0);
+        bossBar.setTitle(Parser.hexString(bossbarText))
+        bossBar.progress = 0.0
 
-        scheduler.runTaskLater(plugin, () -> {
-            this.bossBar.removePlayer(checkedPlayer.getPlayer());
+        scheduler.runTaskLater(plugin, Runnable {
+            this.bossBar.removePlayer(checkedPlayer.player)
 
-            Map<CheckedPlayer, Integer> sch = plugin.getRunnables().bossbarScheduler;
-            Integer remove = sch.get(checkedPlayer);
-            if(remove == null) return;
-            scheduler.cancelTask(remove);
-            sch.remove(checkedPlayer);
-        }, 20L * 2);
-
+            val sch: MutableMap<CheckedPlayer, Int> = plugin.runnables.bossbarScheduler
+            val remove: Int? = sch.get(checkedPlayer)
+            if(remove == null) return@Runnable
+            scheduler.cancelTask(remove)
+            sch.remove(checkedPlayer)
+        }, 20L * 2L)
     }
-
 }
