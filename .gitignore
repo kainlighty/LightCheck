@@ -111,6 +111,5 @@ buildNumber.properties
 
 # Common working directory
 .gradle/
-gradle/
 .kotlin
 /build
