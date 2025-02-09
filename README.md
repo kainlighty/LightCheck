@@ -50,35 +50,88 @@
 | lightcheck.bypass            | Prohibit checking players with this permission |
 | lightcheck.admin             | Full access to the plugin                      |
 
-### › [API](https://github.com/kainlighty/LightCheck/tree/master/src/main/java/ru/kainlight/lightcheck/API)
+### › [API](https://github.com/kainlighty/LightCheck/tree/master/API/src/main/java/ru/kainlight/lightcheck/API)
+
+#### Maven
 ```
-<repository>
-    <id>jitpack.io</id>
-    <url>https://jitpack.io</url>
-</repository>
+ <repository>
+     <id>jitpack.io</id>
+     <url>https://jitpack.io</url>
+ </repository>
 
-<dependency>
-    <groupId>com.github.kainlighty</groupId>
-    <artifactId>LightCheck</artifactId>
-    <version>2.2.0</version>
-    <scope>provided</scope>
-</dependency>
+ <dependency>
+     <groupId>com.github.kainlighty</groupId>
+     <artifactId>LightCheck</artifactId>
+     <version>2.2.4</version>
+     <scope>provided</scope>
+ </dependency>
 ```
 
-− **Events**:
+#### Gradle — Groovy DSL:
+```groovy
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
 
-- #### PlayerCheckEvent
-- #### PlayerApproveEvent
-- #### PlayerDisproveEvent
+dependencies {
+    compileOnly 'com.github.kainlighty:LightCheck:2.2.4'
+}
+```
+#### Gradle — Kotlin DSL:
+```kotlin
+repositories {
+    mavenCentral()
+    maven("https://jitpack.io/")
+}
 
-− **Methods**:
+dependencies {
+    compileOnly("com.github.kainlighty:LightCheck:2.2.4")
+}
+```
 
-- #### LightCheckAPI.getCheckedPlayers();
-- #### LightCheckAPI.getCheckedPlayer(); # Have main methods (approve(), disprove() and etc..)
-- #### LightCheckAPI.getCheckedPlayerByInspector(); # Have main methods (approve(), disprove() and etc..)
-- #### LightCheckAPI.isChecking();
-- #### LightCheckAPI.isCheckingByInspector();
-- #### LightCheckAPI.call(); # Start check logic
-- #### LightCheckAPI.approve();
-- #### LightCheckAPI.disprove();
-- #### LightCheckAPI.stopAll();
+### Events
+
+| Name                | Description                                                                           |
+|---------------------|---------------------------------------------------------------------------------------|
+| PlayerCheckEvent    | You can cancel a player challenge for checking <br> or do something at that moment.   |
+| PlayerApproveEvent  | It is called when the player is confirmed for checking                                |
+| PlayerDisproveEvent | It is called when a player is disproved on checking                                   |
+
+#### Methods
+
+> Get provider: `public LightCheckAPI lightCheckApi = LightCheckAPI.getProvider();`
+
+| API                                    | Description                                           |
+|----------------------------------------|-------------------------------------------------------|
+| getCheckedPlayers()                    | Get players who are being checked                     |
+| getCheckedPlayer(player)               | Get a player who is being checked                     |
+| getCheckedPlayerByInspector(inspector) | Get the player by the inspector who is being checked  |
+| isChecking(player)                     | Check if the player is being checking                 |
+| isCheckingByInspector(inspector)       | Check if the player is being checked by the inspector |
+| getCachedCheckLocations()              | Get all locations for checks                          |
+| getOccupiedLocations()                 | Get all occupied locations for checks                 |
+| call(player, inspector)                | Start a player check                                  |
+| stopAll()                              | Stop all checks                                       |
+
+| CheckedPlayer                     | Description                                                         |
+|-----------------------------------|---------------------------------------------------------------------|
+| getPlayer()                       | Get a bukkit player                                                 |
+| getInspector()                    | Get an `InspectorPlayer` from the player                            |
+| getPreviousLocation()             | Get the previous location _(from where he was teleported)_          |
+| approve()                         | Approve the player punishment                                       |
+| disprove()                        | Disprove the player (do not punish)                                 |
+| teleportToInspector()             | Teleport the player to the inspector                                |
+| teleportToCheckLocation()         | Teleport to an unoccupied location for checks                       |
+| teleportToPreviousLocation()      | Teleport to the previous location                                   |
+| startTimer()                      | Start the countdown to punishment                                   |
+| getTimer()                        | Get the current timer value from the player                         |
+| hasTimer()                        | Check if the player has a timer _(if stopped, it is also **true**)_ |
+| stopTimer()                       | Stop the timer                                                      |
+
+| InspectorPlayer              | Description                                                |
+|------------------------------|------------------------------------------------------------|
+| getPlayer()                  | Get a bukkit player                                        |
+| getCheckedPlayer()           | Get an `CheckedPlayer` from the inspector                  |
+| getPreviousLocation()        | Get the previous location _(from where he was teleported)_ |
+| teleportToPreviousLocation() | Teleport to the previous location                          |
