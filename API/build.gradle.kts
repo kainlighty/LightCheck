@@ -74,3 +74,9 @@ publishing {
         }
     }
 }
+
+tasks.register<Jar>("deploy") {
+    archiveBaseName.set("API")
+    archiveVersion.set("${project.version}")
+    destinationDirectory.set(layout.buildDirectory.dir("libs"))
+}

@@ -2,3 +2,5 @@ jdk:
   - openjdk17
 install:
   - ./gradlew :API:build
+commands:
+  - ./gradlew :API:deploy
