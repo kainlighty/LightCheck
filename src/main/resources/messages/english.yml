@@ -1,4 +1,4 @@
-config-version: 1.4
+config-version: 1.5
 # To use spaces, use \n or |, if you want to remove the indentation, change any text.
 # Example disprove > player: "&a&l» &fYou were found not guilty, have a nice game!"
 
@@ -18,7 +18,7 @@ help:
 
 list:
   header: "<newline>  <dark_gray><st>   </st><yellow><bold> LIGHTCHECK LIST <dark_gray><st>   </st>"
-  body: "<red>#inspector# <gray>› <green>#username#"
+  body: "<red>#inspector# <gray>› <green>#player#"
   footer: "Now checked: #count# players"
 
 successfully:
@@ -38,7 +38,7 @@ successfully:
     staff: "<green><bold>» </bold><white>Player <yellow>#username# <white>found not guilty"
 
 errors:
-  no-permissions: "<red><bold>» </bold><white>You don't have permissions to this command"
+  no-permissions: "<red><bold>» </bold><white>You don't have permission #permission# to this command"
   already: "<red><bold>» </bold><white>The player is already being checked"
   already-self: "<red><bold>» </bold><white>You are already being checked"
   call-self: "<red><bold>» </bold><white>You can't call yourself in for a check"
@@ -46,6 +46,7 @@ errors:
   no-timer: "<red><bold>» </bold><white>Player #username# does not have a timer"
   bypass: "<red><bold>» </bold><white>Player <yellow>#username# <white>protected from checks"
   no-checks: "<red><bold>» </bold><white>There are no active checks"
+  no-available-locations: "<red><bold>» </bold><white>There are no available locations"
 
 screen:
   check-title: "<red><bold>VERIFICATION"

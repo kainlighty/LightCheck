@@ -7,19 +7,22 @@ import org.bukkit.entity.Player
 import ru.kainlight.lightcheck.Main
 import ru.kainlight.lightlibrary.equalsIgnoreCase
 
-class Completer(val plugin: Main) : TabCompleter {
+internal class Completer(private val plugin: Main) : TabCompleter {
+
+    private val defaultCompletions = mutableListOf("continue", "stop")
 
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<String>): MutableList<String>? {
-        if (! sender.hasPermission("lightcheck.check")) return null
+        if (!sender.hasPermission("lightcheck.check")) return null
 
         if (command.name.equalsIgnoreCase("lightcheck") || command.name.equalsIgnoreCase("check")) {
             if (args.size == 1) {
                 val completionsCopy: MutableList<String> = mutableListOf("list", "approve", "disprove", "timer", "stop-all")
-                val playerNames = plugin.server.onlinePlayers.stream().map { player: Player -> player.name }.toList()
+                val playerNames: List<String> = plugin.server.onlinePlayers.map { player: Player -> player.name }.toList()
                 completionsCopy.addAll(playerNames)
+
                 return completionsCopy
             } else if (args.size == 2 && args[0].equalsIgnoreCase("timer")) {
-                return mutableListOf("continue", "stop")
+                return defaultCompletions
             }
         }
         return null

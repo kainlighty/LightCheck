@@ -4,7 +4,7 @@ import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.Block
 
-class GroundLocation(val location: Location) {
+internal class GroundLocation(val location: Location) {
 
     fun getGroundLocation(): Location {
         val clonedLocation: Location = location.clone()

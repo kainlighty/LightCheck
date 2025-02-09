@@ -4,13 +4,16 @@ plugins {
     id("java")
     kotlin("jvm") version "2.0.20"
     id("maven-publish")
-
     id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
-    id("com.github.johnrengelman.shadow").version("8.1.1")
+    id("com.gradleup.shadow").version("9.0.0-beta7")
 }
 
 group = "ru.kainlight.lightcheck"
-version = "2.2.3.1"
+version = "2.2.4"
+
+val kotlinVersion = "2.0.20"
+val adventureVersion = "4.18.0"
+val adventureBukkitVersion = "4.3.4"
 
 repositories {
     mavenCentral()
@@ -22,66 +25,18 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
+    implementation(project(":API"))
 
     compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
 
-    implementation("net.kyori:adventure-api:4.18.0")
-    implementation("net.kyori:adventure-text-minimessage:4.18.0")
-    implementation("net.kyori:adventure-platform-bukkit:4.3.4")
+    compileOnly("net.kyori:adventure-api:$adventureVersion")
+    compileOnly("net.kyori:adventure-text-minimessage:$adventureVersion")
+    compileOnly("net.kyori:adventure-platform-bukkit:$adventureBukkitVersion")
 
     implementation(files(
         "C:/Users/danny/IdeaProjects/.Kotlin/.private/LightLibrary/bukkit/build/libs/LightLibraryBukkit-PUBLIC-1.0.jar"
     ))
 }
-
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            from(components["java"])
-
-            pom {
-                name.set("LightCheck")
-                description.set("To call the player to check the cheats")
-                url.set("https://github.com/kainlighty/LightCheck")
-
-                licenses {
-                    license {
-                        name.set("MIT License")
-                        url.set("https://github.com/kainlighty/LightCheck?tab=MIT-1-ov-file#")
-                    }
-                }
-
-                developers {
-                    developer {
-                        id.set("kainlight")
-                        name.set("Danil Panov")
-                        organization.set("kainlighty")
-                        url.set("https://github.com/kainlighty")
-                    }
-                }
-
-                scm {
-                    connection.set("scm:git:git://github.com/kainlighty/LightCheck.git")
-                    developerConnection.set("scm:git:git@github.com:kainlighty/LightCheck.git")
-                    url.set("https://github.com/kainlighty/LightCheck")
-                }
-
-                issueManagement {
-                    system.set("GitHub")
-                    url.set("https://github.com/kainlighty/LightCheck/issues")
-                }
-            }
-        }
-    }
-
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/kainlighty/LightCheck")
-        }
-    }
-}
-
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))
@@ -91,19 +46,34 @@ kotlin {
 }
 
 tasks {
+    processResources {
+        val props = mapOf(
+            "pluginVersion" to version,
+            "kotlinVersion" to kotlinVersion,
+            "adventureVersion" to adventureVersion,
+            "adventureBukkitVersion" to adventureBukkitVersion
+        )
+        inputs.properties(props)
+        filteringCharset = "UTF-8"
+        filesMatching("plugin.yml") {
+            expand(props)
+        }
+    }
+
     named<ShadowJar>("shadowJar") {
         archiveBaseName.set(project.name)
         archiveFileName.set("${project.name}-${project.version}.jar")
 
-        // Исключения и переименование пакетов
-        exclude("META-INF/maven/**")
-        exclude("META-INF/INFO_BIN")
-        exclude("META-INF/INFO_SRC")
-        //exclude("kotlin")
-        //exclude("org/jetbrains/kotlin/**")
+        // Исключения
+        exclude("META-INF/maven/**",
+                "META-INF/INFO_BIN",
+                "META-INF/INFO_SRC",
+                "kotlin/**"
+        )
+        mergeServiceFiles()
 
+        // Переименование пакетов
         val shadedPath = "ru.kainlight.lightcheck.shaded"
-
         relocate("ru.kainlight.lightlibrary", "$shadedPath.lightlibrary")
     }
 }

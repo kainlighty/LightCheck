@@ -1,4 +1,4 @@
-config-version: 1.4
+config-version: 1.5
 # Для использования пробелов используется \n или |, если вы хотите убрать отступы, измените любой текст.
 # К примеру: disprove > player: "&a&l» &fВы были признаны невиновным!, приятной игры!"
 
@@ -18,7 +18,7 @@ help:
 
 list:
   header: "<newline>  <dark_gray><st>   </st><yellow><bold> LIGHTCHECK LIST <dark_gray><st>   </st>"
-  body: "<red>#inspector# <gray>› <green>#username#"
+  body: "<red>#inspector# <gray>› <green>#player#"
   footer: "Всего проверяется: #count# игроков"
 
 successfully:
@@ -38,7 +38,7 @@ successfully:
     staff: "<green><bold>» </bold><white>Игрок <yellow>#username# <white>признан невиновным"
 
 errors:
-  no-permissions: "<red><bold>» </bold><white>У вас недостаточно прав для выполнения этой команды"
+  no-permissions: "<red><bold>» </bold><white>У вас недостаточно права #permission# для выполнения этой команды"
   already: "<red><bold>» </bold><white>Игрок уже на проверке"
   already-self: "<red><bold>» </bold><white>Вы уже находитесь на проверке"
   call-self: "<red><bold>» </bold><white>Вы не можете вызвать на проверку сами себя"
@@ -46,6 +46,7 @@ errors:
   no-timer: "<red><bold>» </bold><white>Игрок #username# не имеет таймера"
   bypass: "<red><bold>» </bold><white>Игрок <yellow>#username# <white>защищён от проверок"
   no-checks: "<red><bold>» </bold><white>Нет активных проверок"
+  no-available-locations: "<red><bold>» </bold><white>Нет свободных локаций для телепортации"
 
 screen:
   check-title: "<red><bold>ПРОВЕРКА"
