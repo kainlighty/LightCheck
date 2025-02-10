@@ -11,7 +11,11 @@ import org.bukkit.event.player.PlayerEvent
  * Event that is triggered when a player is called for a check.
  */
 @Suppress("UNUSED")
-class PlayerCheckEvent(player: Player) : PlayerEvent(player), Cancellable {
+class PlayerCheckEvent(
+    val player: Player,
+    private val checkedPlayer: CheckedPlayer = LightCheckAPI.getProvider().getCheckedPlayer(player)!!,
+    private val checkedPlayers: MutableSet<CheckedPlayer> = LightCheckAPI.getProvider().getCheckedPlayers()
+) : PlayerEvent(player), Cancellable {
 
     private var isCancelled = false
 
@@ -20,8 +24,8 @@ class PlayerCheckEvent(player: Player) : PlayerEvent(player), Cancellable {
      *
      * @return The checked player instance, or `null` if not found.
      */
-    fun getCheckedPlayer() : CheckedPlayer? {
-        return LightCheckAPI.getProvider().getCheckedPlayer(player)
+    fun getCheckedPlayer(): CheckedPlayer? {
+        return checkedPlayer
     }
 
     /**
@@ -29,8 +33,8 @@ class PlayerCheckEvent(player: Player) : PlayerEvent(player), Cancellable {
      *
      * @return A mutable set containing all the checked players.
      */
-    fun getCheckedPlayers() : MutableSet<CheckedPlayer> {
-        return LightCheckAPI.getProvider().getCheckedPlayers()
+    fun getCheckedPlayers(): MutableSet<CheckedPlayer> {
+        return checkedPlayers
     }
 
     override fun getHandlers(): HandlerList {

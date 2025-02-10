@@ -11,7 +11,10 @@ import org.bukkit.event.player.PlayerEvent
  * Event that is triggered when a player is disproved during a check.
  */
 @Suppress("UNUSED")
-class PlayerDisproveCheckEvent(player: Player) : PlayerEvent(player), Cancellable {
+class PlayerDisproveCheckEvent(
+    val player: Player,
+    private val checkedPlayer: CheckedPlayer = LightCheckAPI.getProvider().getCheckedPlayer(player)!!
+) : PlayerEvent(player), Cancellable {
 
     private var isCancelled = false
 
@@ -20,8 +23,8 @@ class PlayerDisproveCheckEvent(player: Player) : PlayerEvent(player), Cancellabl
      *
      * @return The checked player instance, or `null` if not found.
      */
-    fun getCheckedPlayer() : CheckedPlayer? {
-        return LightCheckAPI.getProvider().getCheckedPlayer(player)
+    fun getCheckedPlayer(): CheckedPlayer? {
+        return checkedPlayer
     }
 
     override fun getHandlers(): HandlerList {

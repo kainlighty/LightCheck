@@ -11,7 +11,10 @@ import org.bukkit.event.player.PlayerEvent
  * Event that is triggered when a player is approved during a check.
  */
 @Suppress("UNUSED")
-class PlayerApproveCheckEvent(player: Player) : PlayerEvent(player), Cancellable {
+class PlayerApproveCheckEvent(
+    private val player: Player,
+    private val checkedPlayer: CheckedPlayer = LightCheckAPI.getProvider().getCheckedPlayer(player)!!
+) : PlayerEvent(player), Cancellable {
 
     private var isCancelled = false
 
@@ -20,8 +23,8 @@ class PlayerApproveCheckEvent(player: Player) : PlayerEvent(player), Cancellable
      *
      * @return The checked player instance, or `null` if not found.
      */
-    fun getCheckedPlayer() : CheckedPlayer? {
-        return LightCheckAPI.getProvider().getCheckedPlayer(player)
+    fun getCheckedPlayer(): CheckedPlayer? {
+        return checkedPlayer
     }
 
     override fun getHandlers(): HandlerList {
@@ -41,9 +44,11 @@ class PlayerApproveCheckEvent(player: Player) : PlayerEvent(player), Cancellable
     }
 
     companion object {
-        @JvmStatic private val handlerList: HandlerList = HandlerList()
+        @JvmStatic
+        private val handlerList: HandlerList = HandlerList()
 
-        @JvmStatic fun getHandlerList(): HandlerList {
+        @JvmStatic
+        fun getHandlerList(): HandlerList {
             return handlerList
         }
     }
