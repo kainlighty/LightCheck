@@ -79,23 +79,22 @@ tasks.jar {
 }
 
 tasks.register("deploy") {
-    val deployDir = project.findProperty("deployDir") as? String
-        ?: throw GradleException("Property 'deployDir' is not set")
+    group = "publishing"
+    description = "Copies artifacts to the deploy directory and triggers publish."
     doLast {
+        val deployDir = project.findProperty("deployDir") as? String
+            ?: "someDir"
         val targetDir = file("$deployDir/ru/kainlight/LightCheck/${project.version}")
         targetDir.mkdirs()
 
-        // Копируем основной jar-файл
         copy {
             from(tasks.jar.get().archiveFile)
             into(targetDir)
         }
-        // Копируем sourcesJar
         copy {
             from(tasks.kotlinSourcesJar.get().archiveFile)
             into(targetDir)
         }
-        // Пытаемся найти задачу javadocJar
         tasks.findByName("javadocJar")?.let { task ->
             if (task is Jar) {
                 copy {
