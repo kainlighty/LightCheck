@@ -1,6 +1,6 @@
 jdk:
   - openjdk17
 install:
-  - ./gradlew :API:build
+  - ./gradlew :API:assemble
 commands:
-  - ./gradlew :API:deploy -PdeployDir=$DEPLOY_DIR
+  - ./gradlew :API:customDeploy
