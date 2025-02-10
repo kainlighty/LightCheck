@@ -1,6 +1,0 @@
-jdk:
-  - openjdk17
-install:
-  - ./gradlew :API:assemble
-commands:
-  - ./gradlew :API:customDeploy
