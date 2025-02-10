@@ -85,7 +85,7 @@ tasks.register<Task>("deploy") {
         }
         exec {
             workingDir = project.rootDir
-            commandLine = listOf("./gradlew", "publish")
+            commandLine = listOf("./gradlew", ":API:publish")
         }
     }
 }
