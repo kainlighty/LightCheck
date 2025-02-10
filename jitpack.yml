@@ -1,2 +1,7 @@
-install: ./gradlew :API:assemble
-build: ./gradlew :API:publish
+jdk:
+  - openjdk17
+install:
+  - chmod +x gradlew
+  - ./gradlew :API:assemble
+build:
+  - ./gradlew :API:deploy -PdeployDir=$DEPLOY_DIR
