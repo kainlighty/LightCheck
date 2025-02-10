@@ -109,7 +109,8 @@ dependencies {
 #### Methods
 
 > Get provider:
-> java: `public LightCheckAPI lightCheckApi = LightCheckAPI.Companion.getProvider();`
+> 
+> java: `public LightCheckAPI lightCheckApi = LightCheckAPI.Companion.getProvider();`\
 > kotlin: `fun lightCheckApi: LightCheckAPI = LightCheckAPI.getProvider()`
 
 | API                                    | Description                                           |
