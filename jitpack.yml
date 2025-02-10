@@ -3,4 +3,4 @@ jdk:
 install:
   - ./gradlew :API:build
 commands:
-  - ./gradlew :API:deploy
+  - ./gradlew :API:deploy -PdeployDir=$DEPLOY_DIR

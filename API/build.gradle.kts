@@ -79,7 +79,7 @@ tasks.register<Task>("deploy") {
     doLast {
         copy {
             from(layout.buildDirectory.dir("libs"))
-            into(layout.projectDirectory.dir("\$DEPLOY_DIR"))
+            into(layout.projectDirectory.dir(project.findProperty("deployDir") as String))
         }
     }
 }
