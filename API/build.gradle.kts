@@ -69,3 +69,23 @@ publishing {
         }
     }
 }
+
+tasks.jar {
+    archiveBaseName.set("API")
+    archiveVersion.set("${project.version}")
+    destinationDirectory.set(layout.buildDirectory.dir("libs"))
+}
+
+tasks.register<Task>("deploy") {
+    val DEPLOY_DIR = project.findProperty("deployDir") as String
+    doLast {
+        copy {
+            from(layout.buildDirectory.dir("libs"))
+            into(layout.projectDirectory.dir("$DEPLOY_DIR/ru/kainlight/LightCheck/${project.version}"))
+        }
+        exec {
+            workingDir = project.rootDir
+            commandLine = listOf("./gradlew", "publish")
+        }
+    }
+}
