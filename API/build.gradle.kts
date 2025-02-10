@@ -69,8 +69,8 @@ publishing {
 
     repositories {
         maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/kainlighty/LightCheck")
+            name = "JitPack"
+            url = uri("https://jitpack.io")
         }
     }
 }
