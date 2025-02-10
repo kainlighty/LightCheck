@@ -33,6 +33,8 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             from(components["java"])
+            java.withSourcesJar()
+            java.withJavadocJar()
 
             pom {
                 name.set("LightCheck")
@@ -68,6 +70,12 @@ publishing {
             }
         }
     }
+}
+
+artifacts {
+    add("archives", tasks.jar)
+    add("archives", java.withSourcesJar())
+    add("archives", java.withJavadocJar())
 }
 
 tasks.jar {
