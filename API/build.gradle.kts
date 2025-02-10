@@ -37,6 +37,9 @@ publishing {
             tasks.javadoc
 
             pom {
+                artifactId = "api"
+                version = project.version.toString()
+
                 name.set("LightCheck")
                 description.set("To call the player to check the cheats")
                 url.set("https://github.com/kainlighty/LightCheck")
@@ -70,8 +73,25 @@ publishing {
             }
         }
     }
+    /*repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/kainlighty/LightCheck")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }*/
 }
 
+tasks.jar {
+    archiveBaseName.set("api") // например, нижний регистр
+    archiveVersion.set(project.version.toString())
+    destinationDirectory.set(layout.buildDirectory.dir("libs"))
+}
+
+/*
 tasks.jar {
     archiveBaseName.set("API")
     archiveVersion.set("${project.version}")
@@ -126,4 +146,4 @@ tasks.register("deploy") {
         }
         println("Artifacts copied to ${targetDir.absolutePath}")
     }
-}
+}*/
