@@ -12,7 +12,7 @@ import org.bukkit.event.player.PlayerEvent
  */
 @Suppress("UNUSED")
 class PlayerDisproveCheckEvent(
-    val player: Player,
+    player: Player,
     private val checkedPlayer: CheckedPlayer = LightCheckAPI.getProvider().getCheckedPlayer(player)!!
 ) : PlayerEvent(player), Cancellable {
 

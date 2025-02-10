@@ -12,7 +12,7 @@ import org.bukkit.event.player.PlayerEvent
  */
 @Suppress("UNUSED")
 class PlayerCheckEvent(
-    val player: Player,
+    player: Player,
     private val checkedPlayer: CheckedPlayer = LightCheckAPI.getProvider().getCheckedPlayer(player)!!,
     private val checkedPlayers: MutableSet<CheckedPlayer> = LightCheckAPI.getProvider().getCheckedPlayers()
 ) : PlayerEvent(player), Cancellable {
