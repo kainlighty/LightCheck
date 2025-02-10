@@ -73,7 +73,7 @@ publishing {
             }
         }
     }
-    /*repositories {
+    repositories {
         maven {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/kainlighty/LightCheck")
@@ -82,68 +82,11 @@ publishing {
                 password = System.getenv("GITHUB_TOKEN")
             }
         }
-    }*/
+    }
 }
 
-tasks.jar {
+/*tasks.jar {
     archiveBaseName.set("api") // например, нижний регистр
     archiveVersion.set(project.version.toString())
     destinationDirectory.set(layout.buildDirectory.dir("libs"))
-}
-
-/*
-tasks.jar {
-    archiveBaseName.set("API")
-    archiveVersion.set("${project.version}")
-    destinationDirectory.set(layout.buildDirectory.dir("libs"))
-}
-
-tasks.named("assemble") {
-    dependsOn("generatePomFileForMavenPublication")
-}
-
-tasks.named("generatePomFileForMavenPublication") {
-    // Отключаем механизм up‑to‑date, чтобы POM всегда генерировался заново
-    outputs.upToDateWhen { false }
-}
-
-tasks.register("deploy") {
-    group = "publishing"
-    description = "Copies artifacts to the deploy directory and triggers publish."
-
-    val deployDir = project.findProperty("deployDir") as? String
-        ?: "build"
-    doLast {
-        // Целевая директория для артефактов
-        val targetDir = file("$deployDir/ru/kainlight/LightCheck/${project.version}")
-        targetDir.mkdirs()
-
-        copy {
-            from(tasks.jar.get().archiveFile)
-            into(targetDir)
-        }
-        copy {
-            from(tasks.kotlinSourcesJar.get().archiveFile)
-            into(targetDir)
-        }
-        tasks.findByName("javadocJar")?.let { task ->
-            if (task is Jar) {
-                copy {
-                    from(task.archiveFile)
-                    into(targetDir)
-                }
-            }
-        }
-        val pomFile = file("${layout.buildDirectory.dir("libs")}/publications/maven/pom-default.xml")
-        if (pomFile.exists()) {
-            copy {
-                from(pomFile)
-                into(targetDir)
-                rename { "API-${project.version}.pom" }
-            }
-        } else {
-            println("POM file not found at ${layout.buildDirectory.dir("libs")}/publications/maven/pom-default.xml")
-        }
-        println("Artifacts copied to ${targetDir.absolutePath}")
-    }
 }*/
