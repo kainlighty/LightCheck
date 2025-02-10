@@ -72,28 +72,38 @@ publishing {
     }
 }
 
-artifacts {
-    add("archives", tasks.jar)
-    add("archives", tasks.kotlinSourcesJar)
-    add("archives", tasks.javadoc)
-}
-
 tasks.jar {
     archiveBaseName.set("API")
     archiveVersion.set("${project.version}")
     destinationDirectory.set(layout.buildDirectory.dir("libs"))
 }
 
-tasks.register<Task>("deploy") {
-    val DEPLOY_DIR = project.findProperty("deployDir") as String
+tasks.register("deploy") {
+    val deployDir = project.findProperty("deployDir") as? String
+        ?: throw GradleException("Property 'deployDir' is not set")
     doLast {
+        val targetDir = file("$deployDir/ru/kainlight/LightCheck/${project.version}")
+        targetDir.mkdirs()
+
+        // Копируем основной jar-файл
         copy {
-            from(layout.buildDirectory.dir("libs"))
-            into(layout.projectDirectory.dir("$DEPLOY_DIR/ru/kainlight/LightCheck/${project.version}"))
+            from(tasks.jar.get().archiveFile)
+            into(targetDir)
         }
-        exec {
-            workingDir = project.rootDir
-            commandLine = listOf("./gradlew", ":API:publish")
+        // Копируем sourcesJar
+        copy {
+            from(tasks.kotlinSourcesJar.get().archiveFile)
+            into(targetDir)
         }
+        // Пытаемся найти задачу javadocJar
+        tasks.findByName("javadocJar")?.let { task ->
+            if (task is Jar) {
+                copy {
+                    from(task.archiveFile)
+                    into(targetDir)
+                }
+            }
+        }
+        println("Artifacts copied to ${targetDir.absolutePath}")
     }
 }
