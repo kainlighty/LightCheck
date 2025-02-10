@@ -73,22 +73,28 @@
 ```groovy
 repositories {
     mavenCentral()
-    maven { url 'https://jitpack.io' }
+    maven {
+        name = "GitHubPackages"
+        url = "https://maven.pkg.github.com/kainlighty/LightCheck"
+    }
 }
 
 dependencies {
-    compileOnly 'com.github.kainlighty:LightCheck:2.2.4'
+    compileOnly 'ru.kainlight.lightcheck:api:2.2.4'
 }
 ```
 #### Gradle — Kotlin DSL:
 ```kotlin
 repositories {
     mavenCentral()
-    maven("https://jitpack.io/")
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/kainlighty/LightCheck")
+    }
 }
 
 dependencies {
-    compileOnly("com.github.kainlighty:LightCheck:2.2.4")
+    compileOnly("ru.kainlight.lightcheck:api:2.2.4")
 }
 ```
 
@@ -102,7 +108,9 @@ dependencies {
 
 #### Methods
 
-> Get provider: `public LightCheckAPI lightCheckApi = LightCheckAPI.getProvider();`
+> Get provider:
+> java: `public LightCheckAPI lightCheckApi = LightCheckAPI.Companion.getProvider();`
+> kotlin: `fun lightCheckApi: LightCheckAPI = LightCheckAPI.getProvider()`
 
 | API                                    | Description                                           |
 |----------------------------------------|-------------------------------------------------------|
