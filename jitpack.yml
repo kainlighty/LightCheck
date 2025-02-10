@@ -1,0 +1,2 @@
+install: ./gradlew :API:assemble
+build: ./gradlew :API:publish
