@@ -54,19 +54,15 @@
 
 [![](https://jitci.com/gh/kainlighty/LightCheck/svg)](https://jitci.com/gh/kainlighty/LightCheck)
 
-#### Maven
+#### [Maven](https://github.com/kainlighty/LightCheck/packages/2399113?version=2.2.4)
 ```
- <repository>
-     <id>jitpack.io</id>
-     <url>https://jitpack.io</url>
- </repository>
+<dependency>
+  <groupId>ru.kainlight.lightcheck</groupId>
+  <artifactId>api</artifactId>
+  <version>2.2.4</version>
+</dependency>
 
- <dependency>
-     <groupId>com.github.kainlighty</groupId>
-     <artifactId>LightCheck</artifactId>
-     <version>2.2.4</version>
-     <scope>provided</scope>
- </dependency>
+> $ mvn install
 ```
 
 #### Gradle — Groovy DSL:
