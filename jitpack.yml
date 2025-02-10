@@ -5,3 +5,4 @@ install:
   - ./gradlew :API:assemble
 build:
   - ./gradlew :API:deploy -PdeployDir=$DEPLOY_DIR
+  - ./gradlew :API:publish
