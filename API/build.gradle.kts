@@ -22,6 +22,8 @@ dependencies {
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    withSourcesJar()
+    withJavadocJar()
 }
 kotlin {
     jvmToolchain(17)
@@ -64,13 +66,6 @@ publishing {
                     url.set("https://github.com/kainlighty/LightCheck/issues")
                 }
             }
-        }
-    }
-
-    repositories {
-        maven {
-            name = "JitPack"
-            url = uri("https://jitpack.io")
         }
     }
 }
