@@ -75,6 +75,12 @@ publishing {
     }
 }
 
+tasks.jar {
+    archiveBaseName.set("API")
+    archiveVersion.set("${project.version}")
+    destinationDirectory.set(layout.buildDirectory.dir("libs"))
+}
+
 tasks.register<Task>("deploy") {
     doLast {
         copy {
