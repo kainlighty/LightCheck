@@ -78,12 +78,23 @@ tasks.jar {
     destinationDirectory.set(layout.buildDirectory.dir("libs"))
 }
 
+tasks.named("assemble") {
+    dependsOn("generatePomFileForMavenPublication")
+}
+
+tasks.named("generatePomFileForMavenPublication") {
+    // Отключаем механизм up‑to‑date, чтобы POM всегда генерировался заново
+    outputs.upToDateWhen { false }
+}
+
 tasks.register("deploy") {
     group = "publishing"
     description = "Copies artifacts to the deploy directory and triggers publish."
+
+    val deployDir = project.findProperty("deployDir") as? String
+        ?: "build"
     doLast {
-        val deployDir = project.findProperty("deployDir") as? String
-            ?: "someDir"
+        // Целевая директория для артефактов
         val targetDir = file("$deployDir/ru/kainlight/LightCheck/${project.version}")
         targetDir.mkdirs()
 
@@ -102,6 +113,16 @@ tasks.register("deploy") {
                     into(targetDir)
                 }
             }
+        }
+        val pomFile = file("${layout.buildDirectory.dir("libs")}/publications/maven/pom-default.xml")
+        if (pomFile.exists()) {
+            copy {
+                from(pomFile)
+                into(targetDir)
+                rename { "API-${project.version}.pom" }
+            }
+        } else {
+            println("POM file not found at ${layout.buildDirectory.dir("libs")}/publications/maven/pom-default.xml")
         }
         println("Artifacts copied to ${targetDir.absolutePath}")
     }
