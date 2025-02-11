@@ -52,8 +52,6 @@
 
 ### › [API](https://github.com/kainlighty/LightCheck/tree/master/API/src/main/java/ru/kainlight/lightcheck/API)
 
-[![](https://jitci.com/gh/kainlighty/LightCheck/svg)](https://jitci.com/gh/kainlighty/LightCheck)
-
 #### [Maven](https://github.com/kainlighty/LightCheck/packages/2399113?version=2.2.4)
 ```
 <dependency>
