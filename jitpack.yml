@@ -1,7 +1,0 @@
-jdk:
-  - openjdk17
-install:
-  - chmod +x gradlew
-  - ./gradlew :API:assemble
-build:
-  - ./gradlew :API:publish

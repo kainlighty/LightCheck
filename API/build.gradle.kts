@@ -4,8 +4,11 @@ plugins {
     id("maven-publish")
 }
 
+val apiVersion = "2.2.4"
+val artifactName = "api"
+
 group = "ru.kainlight.lightcheck"
-version = "2.2.4"
+version = apiVersion
 
 repositories {
     mavenCentral()
@@ -20,16 +23,19 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
 }
 
+val javaVersion: Int = 17
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(javaVersion))
     withSourcesJar()
     withJavadocJar()
 }
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(javaVersion)
 }
 
 publishing {
+    val gitUrl = "github.com/kainlighty/LightCheck"
+
     publications {
         create<MavenPublication>("maven") {
             from(components["java"])
@@ -37,17 +43,17 @@ publishing {
             tasks.javadoc
 
             pom {
-                artifactId = "api"
-                version = project.version.toString()
+                artifactId = artifactName
+                version = apiVersion
 
                 name.set("LightCheck")
                 description.set("To call the player to check the cheats")
-                url.set("https://github.com/kainlighty/LightCheck")
+                url.set("https://$gitUrl")
 
                 licenses {
                     license {
                         name.set("MIT License")
-                        url.set("https://github.com/kainlighty/LightCheck?tab=MIT-1-ov-file#")
+                        url.set("https://$gitUrl?tab=MIT-1-ov-file#")
                     }
                 }
 
@@ -61,14 +67,14 @@ publishing {
                 }
 
                 scm {
-                    connection.set("scm:git:git://github.com/kainlighty/LightCheck.git")
+                    connection.set("scm:git:git://$gitUrl.git")
                     developerConnection.set("scm:git:git@github.com:kainlighty/LightCheck.git")
-                    url.set("https://github.com/kainlighty/LightCheck")
+                    url.set("https://$gitUrl")
                 }
 
                 issueManagement {
                     system.set("GitHub")
-                    url.set("https://github.com/kainlighty/LightCheck/issues")
+                    url.set("https://$gitUrl/issues")
                 }
             }
         }
@@ -76,7 +82,7 @@ publishing {
     repositories {
         maven {
             name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/kainlighty/LightCheck")
+            url = uri("https://maven.pkg.$gitUrl")
             credentials {
                 username = System.getenv("GITHUB_ACTOR")
                 password = System.getenv("GITHUB_TOKEN")
@@ -84,9 +90,3 @@ publishing {
         }
     }
 }
-
-/*tasks.jar {
-    archiveBaseName.set("api") // например, нижний регистр
-    archiveVersion.set(project.version.toString())
-    destinationDirectory.set(layout.buildDirectory.dir("libs"))
-}*/

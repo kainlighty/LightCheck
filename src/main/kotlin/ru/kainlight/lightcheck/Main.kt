@@ -50,6 +50,7 @@ class Main : LightPlugin() {
         HandlerList.unregisterAll(this)
         this.server.scheduler.cancelTasks(this)
 
+        LightCheckAPI.removeProvider()
         Init.stop(this)
     }
 

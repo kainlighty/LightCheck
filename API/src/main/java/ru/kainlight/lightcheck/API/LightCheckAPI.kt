@@ -27,6 +27,10 @@ interface LightCheckAPI {
             if(provider == null) provider = value
             else throw ProviderException("The provider has already been assigned")
         }
+
+        fun removeProvider() {
+            provider = null
+        }
     }
 
     /**
