@@ -1,45 +1,39 @@
 package ru.kainlight.lightcheck.API.events
 
-import ru.kainlight.lightcheck.API.CheckedPlayer
-import ru.kainlight.lightcheck.API.LightCheckAPI
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.HandlerList
 import org.bukkit.event.player.PlayerEvent
+import ru.kainlight.lightcheck.API.CheckedPlayer
+import ru.kainlight.lightcheck.API.InspectorPlayer
+import ru.kainlight.lightcheck.API.LightCheckAPI
+
+// @JvmOverloads
 
 /**
  * Event that is triggered when a player is called for a check.
  */
 @Suppress("UNUSED")
-class PlayerCheckEvent(
-    player: Player,
-    private val checkedPlayer: CheckedPlayer = LightCheckAPI.getProvider().getCheckedPlayer(player)!!,
-    private val checkedPlayers: MutableSet<CheckedPlayer> = LightCheckAPI.getProvider().getCheckedPlayers()
-) : PlayerEvent(player), Cancellable {
+class PlayerCheckEvent(player: Player) : PlayerEvent(player), Cancellable {
 
-    private var isCancelled = false
+    val provider = LightCheckAPI.getProvider()
 
     /**
      * Gets the checked player instance for the event's player.
      *
      * @return The checked player instance, or `null` if not found.
      */
-    fun getCheckedPlayer(): CheckedPlayer? {
-        return checkedPlayer
-    }
+    val checkedPlayer: CheckedPlayer? = LightCheckAPI.getProvider().getCheckedPlayer(player)
+    val inspector = checkedPlayer?.inspector
 
     /**
      * Gets all currently checked players.
      *
-     * @return A mutable set containing all the checked players.
+     * @return A immutable set containing all the checked players.
      */
-    fun getCheckedPlayers(): MutableSet<CheckedPlayer> {
-        return checkedPlayers
-    }
+    val checkedPlayers: Set<CheckedPlayer> = LightCheckAPI.getProvider().getCheckedPlayers()
 
-    override fun getHandlers(): HandlerList {
-        return handlerList
-    }
+    private var isCancelled = false
 
     override fun isCancelled(): Boolean {
         return this.isCancelled
@@ -49,8 +43,8 @@ class PlayerCheckEvent(
         this.isCancelled = cancel
     }
 
-    fun cancel() {
-        this.isCancelled = true
+    override fun getHandlers(): HandlerList {
+        return handlerList
     }
 
     companion object {

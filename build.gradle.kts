@@ -2,16 +2,16 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     id("java")
-    kotlin("jvm") version "2.0.20"
+    kotlin("jvm") version "2.1.10"
     id("maven-publish")
     id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
     id("com.gradleup.shadow").version("9.0.0-beta7")
 }
 
 group = "ru.kainlight.lightcheck"
-version = "2.2.4"
+version = "2.2.5"
 
-val kotlinVersion = "2.0.20"
+val kotlinVersion = "2.1.10"
 val adventureVersion = "4.18.0"
 val adventureBukkitVersion = "4.3.4"
 

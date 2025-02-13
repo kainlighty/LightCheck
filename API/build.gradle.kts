@@ -1,10 +1,10 @@
 plugins {
     id("java")
-    kotlin("jvm") version "2.0.20"
+    kotlin("jvm") version "2.1.10"
     id("maven-publish")
 }
 
-val apiVersion = "2.2.4"
+val apiVersion = "2.2.5"
 val artifactName = "api"
 
 group = "ru.kainlight.lightcheck"

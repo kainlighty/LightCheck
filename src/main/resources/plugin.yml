@@ -19,6 +19,7 @@ softdepend:
 commands:
   lightcheck:
     aliases:
+      - lcheck
       - check
 
 permissions:

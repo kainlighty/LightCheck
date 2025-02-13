@@ -27,7 +27,7 @@ interface InspectorPlayer {
      *
      * @return The previous location of the inspector.
      */
-    var previousLocation: Location
+    val previousLocation: Location
 
     /**
      * Teleports the inspector to their previous location.

@@ -23,13 +23,6 @@ interface CheckedPlayer {
     var timer: Long
 
     /**
-     * Sets or gets a flag indicating whether the current timer is active.
-     *
-     * @return `true` if the timer is active; `false` otherwise.
-     */
-    var hasTimer: Boolean
-
-    /**
      * Gets the last known location of the player.
      *
      * @return The location of the player.
@@ -88,6 +81,12 @@ interface CheckedPlayer {
      * @return `true` if the timer was successfully started; `false` otherwise.
      */
     fun startTimer(): Boolean
+    /**
+     * Is there a flag indicating if the player has a timer?
+     *
+     * @return `true` if the timer is active; `false` otherwise.
+     */
+    fun hasTimer(): Boolean
 
     /**
      * Stops the timer for the player.

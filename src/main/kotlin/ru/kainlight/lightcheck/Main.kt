@@ -34,7 +34,7 @@ class Main : LightPlugin() {
 
         this.enable()
 
-        LightCheckAPI.setProvider(LightCheckAPIImpl())
+        LightCheckAPI.setProvider(LightCheckAPIImpl(this))
 
         this.reloadConfigurations()
 
@@ -68,12 +68,12 @@ class Main : LightPlugin() {
 
     private fun loadRandomLocations() {
         val locations = this.config.getStringList("abilities.teleport-to-location.locations")
-        for (locationString in locations) runCatching {
-        parseLocation(locationString)
-            ?.let { LightCheckAPI.getProvider().getCachedCheckLocations().add(it) }
-            ?: run { err("Location is null") }
-        }.onFailure { e ->
-            err("Failed to parse location: $locationString", e)
+
+        for (locationString in locations) {
+            parseLocation(locationString)?.let {
+                LightCheckAPI.getProvider().getCachedCheckLocations().add(it)
+                info("Loaded location $locationString...")
+            }
         }
     }
 
@@ -104,14 +104,14 @@ class Main : LightPlugin() {
             val pitch = rotation[1].toFloatOrNull() ?: return null
 
             Location(world, x, y, z, yaw, pitch)
-        } catch (e: Exception) {
-            err("Error parsing location: $input", e)
+        } catch (_: Exception) {
+            err("Failed to parse location: $input")
             null
         }
     }
 
     companion object { 
-        @JvmStatic private lateinit var instance: Main
+        private lateinit var instance: Main
 
         internal fun getInstance(): Main {
             return instance

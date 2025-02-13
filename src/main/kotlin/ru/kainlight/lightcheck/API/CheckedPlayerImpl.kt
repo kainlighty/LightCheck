@@ -11,15 +11,13 @@ import ru.kainlight.lightcheck.warn
 import ru.kainlight.lightlibrary.getAudience
 import ru.kainlight.lightlibrary.sendMessage
 
-internal data class CheckedPlayerImpl(
-    override val player: Player,
-    private val inspectorPlayer: Player,
-    override var timer: Long = Main.getInstance().config.getLong("settings.timer"),
-    override var hasTimer: Boolean = false,
-    override val previousLocation: Location = player.location
-) : CheckedPlayer {
+internal data class CheckedPlayerImpl(override val player: Player, private val inspectorPlayer: Player) : CheckedPlayer {
 
     override val inspector: InspectorPlayer = InspectorPlayerImpl(inspectorPlayer, this, inspectorPlayer.location)
+
+    override val previousLocation: Location = player.location
+    override var timer: Long = Main.getInstance().config.getLong("settings.timer")
+    private var hasTimer: Boolean = false
 
     override fun approve() {
         if (!player.isOnline || !LightCheckAPI.getProvider().isChecking(player)) return
@@ -118,6 +116,10 @@ internal data class CheckedPlayerImpl(
             Main.getInstance().runnables.startTimerScheduler(this)
             true
         } else false
+    }
+
+    override fun hasTimer(): Boolean {
+        return hasTimer
     }
 
     override fun stopTimer(): Boolean {

@@ -1,14 +1,6 @@
-### Permission - Command - Description ###
-# lightcheck.list - /check list > List of checks now
-# lightcheck.check - /check <player> AND access to help commands
-# lightcheck.approve - /check approve > Approve checked player
-# NONE - /confirm > approve yourself
-# lightcheck.rt - /check rt | removetimer > Remove timer
-# lightcheck.stop-all - /check stop-all > Stop all checks now
-# lightcheck.bypass > protection against a call for verification
-
 config-version: 1.5
-# only when the server is turned on
+
+# It is checked only when the server is loading
 update-notification: true
 debug: false
 

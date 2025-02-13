@@ -1,35 +1,30 @@
 package ru.kainlight.lightcheck.API.events
 
-import ru.kainlight.lightcheck.API.CheckedPlayer
-import ru.kainlight.lightcheck.API.LightCheckAPI
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.HandlerList
 import org.bukkit.event.player.PlayerEvent
+import ru.kainlight.lightcheck.API.CheckedPlayer
+import ru.kainlight.lightcheck.API.InspectorPlayer
+import ru.kainlight.lightcheck.API.LightCheckAPI
 
 /**
  * Event that is triggered when a player is approved during a check.
  */
 @Suppress("UNUSED")
-class PlayerApproveCheckEvent(
-    player: Player,
-    private val checkedPlayer: CheckedPlayer = LightCheckAPI.getProvider().getCheckedPlayer(player)!!
-) : PlayerEvent(player), Cancellable {
+class PlayerApproveCheckEvent(player: Player) : PlayerEvent(player), Cancellable {
 
-    private var isCancelled = false
+    val provider = LightCheckAPI.getProvider()
 
     /**
      * Gets the checked player instance for the event's player.
      *
      * @return The checked player instance, or `null` if not found.
      */
-    fun getCheckedPlayer(): CheckedPlayer? {
-        return checkedPlayer
-    }
+    val checkedPlayer: CheckedPlayer? = LightCheckAPI.getProvider().getCheckedPlayer(player)
+    val inspector = checkedPlayer?.inspector
 
-    override fun getHandlers(): HandlerList {
-        return handlerList
-    }
+    private var isCancelled = false
 
     override fun isCancelled(): Boolean {
         return this.isCancelled
@@ -39,8 +34,8 @@ class PlayerApproveCheckEvent(
         this.isCancelled = cancel
     }
 
-    fun cancel() {
-        this.isCancelled = true
+    override fun getHandlers(): HandlerList {
+        return handlerList
     }
 
     companion object {

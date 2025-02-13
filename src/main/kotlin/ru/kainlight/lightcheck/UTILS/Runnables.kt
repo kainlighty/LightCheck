@@ -6,8 +6,10 @@ import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 import ru.kainlight.lightcheck.API.CheckedPlayer
 import ru.kainlight.lightcheck.Main
-import ru.kainlight.lightlibrary.*
-import java.io.File
+import ru.kainlight.lightlibrary.getAudience
+import ru.kainlight.lightlibrary.multiActionbar
+import ru.kainlight.lightlibrary.multiMessage
+import ru.kainlight.lightlibrary.multiTitle
 import java.util.concurrent.TimeUnit
 
 internal class Runnables(private val plugin: Main) {
@@ -75,9 +77,10 @@ internal class Runnables(private val plugin: Main) {
                 return@Runnable
             }
 
+            val playerAudience = player.getAudience()
             val inspectorName = inspector.name
             val hoverMessage: String? = plugin.getMessagesConfig().getString("chat.hover")
-            if (checkedPlayer.hasTimer) {
+            if (checkedPlayer.hasTimer()) {
                 val timer: Long = checkedPlayer.timer
                 val secToMin: Long = TimeUnit.SECONDS.toMinutes(timer)
                 val with_timer: List<String> = plugin.getMessagesConfig().getStringList("chat.with-timer")
@@ -89,8 +92,8 @@ internal class Runnables(private val plugin: Main) {
                         .replace("#minutes#", secToMin.toString())
                         .replace("#seconds#", timer.toString())
 
-                    if(hoverMessage != null && !hoverMessage.isBlank()) player.getAudience().multiMessage(message, hoverMessage, ClickEvent.Action.RUN_COMMAND, "/check confirm")
-                    else player.getAudience().multiMessage(message)
+                    if(hoverMessage != null && !hoverMessage.isBlank()) playerAudience.multiMessage(message, hoverMessage, ClickEvent.Action.RUN_COMMAND, "/check confirm")
+                    else playerAudience.multiMessage(message)
                 }
             } else {
                 val without_timer: List<String> = plugin.getMessagesConfig().getStringList("chat.without-timer")
@@ -99,8 +102,8 @@ internal class Runnables(private val plugin: Main) {
                     message = message
                         .replace("#inspector#", inspectorName)
 
-                    if(hoverMessage != null && !hoverMessage.isBlank()) player.getAudience().multiMessage(message, hoverMessage, ClickEvent.Action.RUN_COMMAND, "/check confirm")
-                    else player.getAudience().multiMessage(message)
+                    if(hoverMessage != null && !hoverMessage.isBlank()) playerAudience.multiMessage(message, hoverMessage, ClickEvent.Action.RUN_COMMAND, "/check confirm")
+                    else playerAudience.multiMessage(message)
                 }
             }
         }, 0L, schedulerTimer)
@@ -189,34 +192,6 @@ internal class Runnables(private val plugin: Main) {
 
         messageChatTimer.remove(checkedPlayer)?.let { scheduler.cancelTask(it) }
         messageScreenTimer.remove(checkedPlayer.player)?.let { scheduler.cancelTask(it) }
-    }
-
-    // MISC
-
-    // $ DEV-7
-    fun addLog(username: String, txt: String) {
-        val cleanedText = txt
-            .replace("""[&][0-9a-fk-or]""".toRegex(), "")
-            .replace("""<[^>]+>""".toRegex(), "")
-        val enabled: Boolean = plugin.config.getBoolean("settings.logging", false)
-        if (!enabled) return
-
-        // !
-        val logsFolder = File(plugin.dataFolder, "logs")
-        if (!logsFolder.exists()) logsFolder.mkdirs()
-
-        val logFile = File(logsFolder, "$username.yml")
-        if (!logFile.exists()) {
-            logFile.createNewFile()
-        }
-        // !
-
-        val logConfig = LightConfig(plugin, "logs", "$username.yml")
-        val list: MutableList<String> = logConfig.getConfig().getStringList("log")
-        list.add(cleanedText)
-
-        logConfig.getConfig().set("log", list)
-        logConfig.saveConfig()
     }
 
     fun sendPunishmentCommand(player: Player, alias: String) {

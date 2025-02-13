@@ -37,27 +37,29 @@
 | check                | Help by commands                       | lightcheck.check          |
 | check list           | The list of currently checking         | lightcheck.list           |
 | check \<player>      | Summon a player to check               | lightcheck.check          |
-| check confirm        | Confirm the use of cheats (for player) | -                         |
+| check confirm        | Confirm the use of cheats (for player) | lightcheck.confirm        |
 | check approve        | To find the player guilty              | lightcheck.approve        |
 | check disprove       | To find the player innocent            | lightcheck.disprove       |
 | check timer continue | Continue the timer to the player       | lightcheck.timer.continue |
 | check timer stop     | Stop the timer to the player           | lightcheck.timer.stop     |
-| check stop-all       | Cancel all current checks              | lightcheck.admin          |
-| check reload         | Reload configurations                  | *ONLY CONSOLE*            |
+| check stop-all       | Cancel all current checks              | lightcheck.stop-all       |
+| check reload         | Reload configurations                  | lightcheck.reload         |
 
-| Permissions without commands | Description                                    |
-|------------------------------|------------------------------------------------|
-| lightcheck.bypass            | Prohibit checking players with this permission |
-| lightcheck.admin             | Full access to the plugin                      |
+| Permissions without commands |
+|------------------------------|
+| lightcheck.timer.*           |
+| lightcheck.bypass            |
+| lightcheck.admin             |
 
 ### › [API](https://github.com/kainlighty/LightCheck/tree/master/API/src/main/java/ru/kainlight/lightcheck/API)
 
-#### [Maven](https://github.com/kainlighty/LightCheck/packages/2399113?version=2.2.4)
+#### Maven
 ```
 <dependency>
   <groupId>ru.kainlight.lightcheck</groupId>
   <artifactId>api</artifactId>
-  <version>2.2.4</version>
+  <version>2.2.5</version>
+  <scope>provided</scope>
 </dependency>
 
 > $ mvn install
@@ -74,7 +76,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'ru.kainlight.lightcheck:api:2.2.4'
+    compileOnly 'ru.kainlight.lightcheck:api:2.2.5'
 }
 ```
 #### Gradle — Kotlin DSL:
@@ -88,7 +90,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("ru.kainlight.lightcheck:api:2.2.4")
+    compileOnly("ru.kainlight.lightcheck:api:2.2.5")
 }
 ```
 
@@ -102,37 +104,38 @@ dependencies {
 
 #### Methods
 
-> Get provider:
-> 
-> java: `public LightCheckAPI lightCheckApi = LightCheckAPI.Companion.getProvider();`\
-> kotlin: `val lightCheckApi: LightCheckAPI = LightCheckAPI.getProvider()`
+> Get provider: `LightCheckAPI.getProvider()`
 
-| API                                    | Description                                           |
-|----------------------------------------|-------------------------------------------------------|
-| getCheckedPlayers()                    | Get players who are being checked                     |
-| getCheckedPlayer(player)               | Get a player who is being checked                     |
-| getCheckedPlayerByInspector(inspector) | Get the player by the inspector who is being checked  |
-| isChecking(player)                     | Check if the player is being checking                 |
-| isCheckingByInspector(inspector)       | Check if the player is being checked by the inspector |
-| getCachedCheckLocations()              | Get all locations for checks                          |
-| getOccupiedLocations()                 | Get all occupied locations for checks                 |
-| call(player, inspector)                | Start a player check                                  |
-| stopAll()                              | Stop all checks                                       |
+| API                                    | Description                                             |
+|----------------------------------------|---------------------------------------------------------|
+| getCheckedPlayers()                    | Get players who are being checked                       |
+| getCheckedPlayer(player)               | Get a player who is being checked                       |
+| getCheckedPlayerByInspector(inspector) | Get the player by the inspector who is being checked    |
+| isChecking(player)                     | Check if the player is being checking                   |
+| isCheckingByInspector(inspector)       | Check if the player is being checked by the inspector   |
+| getInspectorByPlayer(player)           | Get `InspectorPlayer` for the player being checked      |
+| getInspectors()                        | Get a list of all inspectors                            |
+| getCachedCheckLocations()              | Get all locations for checks                            |
+| getOccupiedLocations()                 | Get all occupied locations for checks                   |
+| call(player, inspector)                | Start a player check                                    |
+| stopAll()                              | Stop all checks                                         |
+| addLog(username, text)                 | Add your own event to the log for the specified player  |
 
-| CheckedPlayer                     | Description                                                         |
-|-----------------------------------|---------------------------------------------------------------------|
-| getPlayer()                       | Get a bukkit player                                                 |
-| getInspector()                    | Get an `InspectorPlayer` from the player                            |
-| getPreviousLocation()             | Get the previous location _(from where he was teleported)_          |
-| approve()                         | Approve the player punishment                                       |
-| disprove()                        | Disprove the player (do not punish)                                 |
-| teleportToInspector()             | Teleport the player to the inspector                                |
-| teleportToCheckLocation()         | Teleport to an unoccupied location for checks                       |
-| teleportToPreviousLocation()      | Teleport to the previous location                                   |
-| startTimer()                      | Start the countdown to punishment                                   |
-| getTimer()                        | Get the current timer value from the player                         |
-| hasTimer()                        | Check if the player has a timer _(if stopped, it is also **true**)_ |
-| stopTimer()                       | Stop the timer                                                      |
+| CheckedPlayer                | Description                                                         |
+|------------------------------|---------------------------------------------------------------------|
+| getPlayer()                  | Get a bukkit player                                                 |
+| getInspector()               | Get an `InspectorPlayer` from the player                            |
+| getPreviousLocation()        | Get the previous location _(from where he was teleported)_          |
+| approve()                    | Approve the player punishment                                       |
+| disprove()                   | Disprove the player (do not punish)                                 |
+| teleportToInspector()        | Teleport the player to the inspector                                |
+| teleportToCheckLocation()    | Teleport to an unoccupied location for checks                       |
+| teleportToPreviousLocation() | Teleport to the previous location                                   |
+| startTimer()                 | Start the countdown to punishment                                   |
+| setTimer(value)              | Set or change value for the timer                                   |
+| getTimer()                   | Get the current timer value from the player                         |
+| hasTimer()                   | Check if the player has a timer _(if stopped, it is also **true**)_ |
+| stopTimer()                  | Stop the timer                                                      |
 
 | InspectorPlayer              | Description                                                |
 |------------------------------|------------------------------------------------------------|
