@@ -6,7 +6,6 @@ import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 import ru.kainlight.lightcheck.API.CheckedPlayer
 import ru.kainlight.lightcheck.Main
-import ru.kainlight.lightlibrary.getAudience
 import ru.kainlight.lightlibrary.multiActionbar
 import ru.kainlight.lightlibrary.multiMessage
 import ru.kainlight.lightlibrary.multiTitle
@@ -77,13 +76,12 @@ internal class Runnables(private val plugin: Main) {
                 return@Runnable
             }
 
-            val playerAudience = player.getAudience()
             val inspectorName = inspector.name
-            val hoverMessage: String? = plugin.getMessagesConfig().getString("chat.hover")
+            val hoverMessage: String? = plugin.getMessages().getString("chat.hover")
             if (checkedPlayer.hasTimer()) {
                 val timer: Long = checkedPlayer.timer
                 val secToMin: Long = TimeUnit.SECONDS.toMinutes(timer)
-                val with_timer: List<String> = plugin.getMessagesConfig().getStringList("chat.with-timer")
+                val with_timer: List<String> = plugin.getMessages().getStringList("chat.with-timer")
 
                 with_timer.forEach {
                     var message = it
@@ -92,18 +90,18 @@ internal class Runnables(private val plugin: Main) {
                         .replace("#minutes#", secToMin.toString())
                         .replace("#seconds#", timer.toString())
 
-                    if(hoverMessage != null && !hoverMessage.isBlank()) playerAudience.multiMessage(message, hoverMessage, ClickEvent.Action.RUN_COMMAND, "/check confirm")
-                    else playerAudience.multiMessage(message)
+                    if(hoverMessage != null && !hoverMessage.isBlank()) player.multiMessage(message, hoverMessage, ClickEvent.Action.RUN_COMMAND, "/check confirm")
+                    else player.multiMessage(message)
                 }
             } else {
-                val without_timer: List<String> = plugin.getMessagesConfig().getStringList("chat.without-timer")
+                val without_timer: List<String> = plugin.getMessages().getStringList("chat.without-timer")
                 without_timer.forEach {
                     var message = it
                     message = message
                         .replace("#inspector#", inspectorName)
 
-                    if(hoverMessage != null && !hoverMessage.isBlank()) playerAudience.multiMessage(message, hoverMessage, ClickEvent.Action.RUN_COMMAND, "/check confirm")
-                    else playerAudience.multiMessage(message)
+                    if(hoverMessage != null && !hoverMessage.isBlank()) player.multiMessage(message, hoverMessage, ClickEvent.Action.RUN_COMMAND, "/check confirm")
+                    else player.multiMessage(message)
                 }
             }
         }, 0L, schedulerTimer)
@@ -140,15 +138,16 @@ internal class Runnables(private val plugin: Main) {
         if (timer != null) {
             val titleEnabled: Boolean = plugin.config.getBoolean("settings.title")
             if (titleEnabled) {
-                val titleMessage: String = plugin.getMessagesConfig().getString("screen.check-title") !!
-                val subTitleMessage: String = plugin.getMessagesConfig().getString("screen.check-subtitle") !!
-                player.getAudience().multiTitle(titleMessage, subTitleMessage, 1, 15, 2)
+                val titleMessage: String = plugin.getMessages().getString("screen.check-title") !!
+                val subTitleMessage: String = plugin.getMessages().getString("screen.check-subtitle") !!
+                player.multiTitle(titleMessage, subTitleMessage, 1, 15, 2)
             }
         }
     }
 
     private fun startBossBarScheduler(checkedPlayer: CheckedPlayer) {
         val bossBar = Bossbar(plugin, checkedPlayer)
+
         val task = plugin.runTaskTimer(Runnable {
             bossBar.show()
         }, 0L, 20L)
@@ -162,9 +161,9 @@ internal class Runnables(private val plugin: Main) {
         if (timer != null) {
             val actionbarEnabled: Boolean = plugin.config.getBoolean("settings.actionbar")
             if (actionbarEnabled) {
-                val message: String = plugin.getMessagesConfig().getString("screen.actionbar")?.replace("#seconds#", timer.toString())!!
-                player.getAudience().multiActionbar(message)
-                inspector.getAudience().multiActionbar(message)
+                val message: String = plugin.getMessages().getString("screen.actionbar")?.replace("#seconds#", timer.toString())!!
+                player.multiActionbar(message)
+                inspector.multiActionbar(message)
             }
         }
     }
@@ -173,7 +172,7 @@ internal class Runnables(private val plugin: Main) {
         if (checkedPlayer == null) return
 
         clockTimerScheduler.remove(checkedPlayer)?.let { taskID ->
-            plugin.server.scheduler.cancelTask(taskID)
+            plugin.cancelTask(taskID)
         }
     }
 
@@ -188,10 +187,8 @@ internal class Runnables(private val plugin: Main) {
     private fun stopMessages(checkedPlayer: CheckedPlayer?) {
         if (checkedPlayer == null) return
 
-        val scheduler = plugin.server.scheduler
-
-        messageChatTimer.remove(checkedPlayer)?.let { scheduler.cancelTask(it) }
-        messageScreenTimer.remove(checkedPlayer.player)?.let { scheduler.cancelTask(it) }
+        messageChatTimer.remove(checkedPlayer)?.let { plugin.cancelTask(it) }
+        messageScreenTimer.remove(checkedPlayer.player)?.let { plugin.cancelTask(it) }
     }
 
     fun sendPunishmentCommand(player: Player, alias: String) {

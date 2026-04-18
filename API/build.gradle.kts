@@ -1,6 +1,6 @@
 plugins {
     id("java")
-    kotlin("jvm") version "2.1.10"
+    kotlin("jvm") version "2.3.10"
     id("maven-publish")
 }
 
@@ -20,10 +20,10 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib"))
 
-    compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
 }
 
-val javaVersion: Int = 17
+val javaVersion: Int = 21
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(javaVersion))
     withSourcesJar()

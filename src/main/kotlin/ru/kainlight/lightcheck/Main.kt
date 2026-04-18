@@ -2,6 +2,7 @@ package ru.kainlight.lightcheck
 
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.event.HandlerList
 import ru.kainlight.lightcheck.API.LightCheckAPI
 import ru.kainlight.lightcheck.API.LightCheckAPIImpl
@@ -11,7 +12,6 @@ import ru.kainlight.lightcheck.EVENTS.CheckedListener
 import ru.kainlight.lightcheck.UTILS.Runnables
 import ru.kainlight.lightlibrary.LightConfig
 import ru.kainlight.lightlibrary.LightPlugin
-import ru.kainlight.lightlibrary.UTILS.Init
 import ru.kainlight.lightlibrary.UTILS.Parser
 
 class Main : LightPlugin() {
@@ -32,8 +32,6 @@ class Main : LightPlugin() {
     override fun onEnable() {
         instance = this
 
-        this.enable()
-
         LightCheckAPI.setProvider(LightCheckAPIImpl(this))
 
         this.reloadConfigurations()
@@ -43,15 +41,14 @@ class Main : LightPlugin() {
         this.registerCommand("lightcheck", Check(this), Completer(this))
         this.registerListener(CheckedListener(this))
 
-        Init.start(this, true)
+        this.enable()
     }
 
     override fun onDisable() {
-        HandlerList.unregisterAll(this)
-        this.server.scheduler.cancelTasks(this)
-
         LightCheckAPI.removeProvider()
-        Init.stop(this)
+
+        HandlerList.unregisterAll(this)
+        this.cancelTasks()
     }
 
     fun reloadConfigurations() {

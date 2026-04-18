@@ -36,7 +36,7 @@ internal class Bossbar(private val plugin: Main,
             return false
         }
 
-        val bossbarText: String? = plugin.getMessagesConfig().getString("screen.bossbar")
+        val bossbarText: String? = plugin.getMessages().getString("screen.bossbar")
         if (bossbarText.isNullOrEmpty()) return false
 
         val newName: String = bossbarText.replace("#seconds#", playerTimer.toString())
@@ -49,7 +49,7 @@ internal class Bossbar(private val plugin: Main,
     }
 
     fun hide() {
-        val bossbarText: String? = plugin.getMessagesConfig().getString("screen.disprove-title")
+        val bossbarText: String? = plugin.getMessages().getString("screen.disprove-title")
         if (bossbarText == null || bossbarText.isEmpty()) {
             this.bossBar.removePlayer(checkedPlayer.player)
             return
@@ -66,8 +66,7 @@ internal class Bossbar(private val plugin: Main,
             this.bossBar.removePlayer(inspectorPlayer)
 
             val sch: MutableMap<Player, Int> = plugin.runnables.bossbarScheduler
-            val remove: Int? = sch.get(player)
-            if(remove == null) return@Runnable
+            val remove: Int = sch.get(player) ?: return@Runnable
 
             plugin.cancelTask(remove)
             sch.remove(player)

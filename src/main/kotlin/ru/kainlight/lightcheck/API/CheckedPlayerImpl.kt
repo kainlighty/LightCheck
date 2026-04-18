@@ -8,7 +8,6 @@ import ru.kainlight.lightcheck.Main
 import ru.kainlight.lightcheck.UTILS.GroundLocation
 import ru.kainlight.lightcheck.err
 import ru.kainlight.lightcheck.warn
-import ru.kainlight.lightlibrary.getAudience
 import ru.kainlight.lightlibrary.sendMessage
 
 internal data class CheckedPlayerImpl(override val player: Player, private val inspectorPlayer: Player) : CheckedPlayer {
@@ -26,7 +25,7 @@ internal data class CheckedPlayerImpl(override val player: Player, private val i
         Main.getInstance().server.pluginManager.callEvent(event)
         if (event.isCancelled) return
 
-        player.getAudience().clearTitle()
+        player.clearTitle()
         Main.getInstance().runnables.stopAll(this)
         LightCheckAPI.getProvider().getCheckedPlayers().remove(this)
         player.isInvulnerable = false
@@ -41,7 +40,7 @@ internal data class CheckedPlayerImpl(override val player: Player, private val i
         Main.getInstance().server.pluginManager.callEvent(event)
         if (event.isCancelled) return
 
-        player.getAudience().clearTitle()
+        player.clearTitle()
         teleportToPreviousLocation()
         Main.getInstance().runnables.stopAll(this)
         LightCheckAPI.getProvider().getCheckedPlayers().remove(this)
@@ -69,7 +68,7 @@ internal data class CheckedPlayerImpl(override val player: Player, private val i
         val isEnabled = teleportToLocations.getBoolean("enable", false)
         if (!isEnabled) return false
 
-        val inspectorPlayer = inspectorPlayer.getAudience()
+        val inspectorPlayer = inspectorPlayer
 
         val locationStrings = teleportToLocations.getStringList("locations")
         if (locationStrings.isEmpty()) {
@@ -87,7 +86,7 @@ internal data class CheckedPlayerImpl(override val player: Player, private val i
             }
         }
 
-        Main.getInstance().getMessagesConfig().getString("errors.no-available-locations")
+        Main.getInstance().getMessages().getString("errors.no-available-locations")
             .sendMessage(inspectorPlayer)
         warn("No free locations available")
         return false

@@ -67,9 +67,9 @@ internal class CheckedListener(private val plugin: Main) : Listener {
             event.isCancelled = true
 
             val staff: Player? = LightCheckAPI.getProvider().getCheckedPlayer(player)?.inspector?.player
-            val privateDialog: String = plugin.getMessagesConfig().getString("chat.dialog")
+            val privateDialog: String = plugin.getMessages().getString("chat.dialog")
                 ?.replace("#username#", player.name)
-                ?.replace("#message#", event.message) !!
+                ?.replace("#message#", event.message)!!
 
             this.privateMessage(privateDialog, player, staff)
         }

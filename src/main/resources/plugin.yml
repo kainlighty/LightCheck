@@ -9,9 +9,6 @@ website: "https://github.com/kainlighty/LightCheck"
 
 libraries:
   - org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}
-  - net.kyori:adventure-api:${adventureVersion}
-  - net.kyori:adventure-text-minimessage:${adventureVersion}
-  - net.kyori:adventure-platform-bukkit:${adventureBukkitVersion}
 
 softdepend:
   - PlaceholderAPI

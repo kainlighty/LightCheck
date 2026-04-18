@@ -43,7 +43,6 @@ internal class LightCheckAPIImpl(private val plugin: Main) : LightCheckAPI {
     }
 
     // $ DEV-7
-    // TODO: Добавление в логи перенесено, и в API добавлено. Need Test
     override fun addLog(username: String, text: String): String? {
         val enabled: Boolean = plugin.config.getBoolean("settings.logging", false)
         if (!enabled) return null
